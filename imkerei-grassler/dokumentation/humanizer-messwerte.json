@@ -1,0 +1,28 @@
+{
+  "before": {
+    "headline_dots": 11,
+    "headlines": 21,
+    "words": 426,
+    "units": 60,
+    "median": 7.0,
+    "max": 15,
+    "starts": 3,
+    "run_17_23": 0,
+    "markers": 0,
+    "dashes": 0,
+    "triads": 10
+  },
+  "after": {
+    "headline_dots": 0,
+    "headlines": 21,
+    "words": 531,
+    "units": 41,
+    "median": 13,
+    "max": 26,
+    "starts": 3,
+    "run_17_23": 2,
+    "markers": 0,
+    "dashes": 0,
+    "triads": 3
+  }
+}

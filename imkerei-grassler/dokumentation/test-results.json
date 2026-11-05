@@ -1,0 +1,28 @@
+{
+  "checks": [
+    "index 1440: no overflow, one H1, images and labels OK",
+    "honig 1440: no overflow, one H1, images and labels OK",
+    "imkerei 1440: no overflow, one H1, images and labels OK",
+    "gastronomie 1440: no overflow, one H1, images and labels OK",
+    "kontakt 1440: no overflow, one H1, images and labels OK",
+    "impressum 1440: no overflow, one H1, images and labels OK",
+    "datenschutz 1440: no overflow, one H1, images and labels OK",
+    "freigabe 1440: no overflow, one H1, images and labels OK",
+    "index 390: no overflow, one H1, images and labels OK",
+    "honig 390: no overflow, one H1, images and labels OK",
+    "imkerei 390: no overflow, one H1, images and labels OK",
+    "gastronomie 390: no overflow, one H1, images and labels OK",
+    "kontakt 390: no overflow, one H1, images and labels OK",
+    "impressum 390: no overflow, one H1, images and labels OK",
+    "datenschutz 390: no overflow, one H1, images and labels OK",
+    "freigabe 390: no overflow, one H1, images and labels OK",
+    "SPA route + product/size prefill OK",
+    "Invalid reply blocked; draft, download and copy/fallback OK; no fake send",
+    "Dark mode rendered",
+    "All 8 standalone-preview routes work",
+    "Static navigation works without JavaScript",
+    "No JS exceptions and no external network requests"
+  ],
+  "errors": [],
+  "requests": []
+}

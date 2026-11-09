@@ -43,6 +43,10 @@ Hellere Grundfläche mit warmem Lichtverlauf, Bienenwachs nur noch in getönten 
 
 Neue Seiten **Standorte** (illustrierte Karte des Kamptals mit Stand Wolfshof und dem kommenden Stand bei Schönberg am Kamp, Einkaufsmöglichkeiten) und **Bienenstock-Partnerschaft** (Ablauf, drei Paketvorschläge). Honigseite um vier verfeinerte Sorten, Fotoplätze und Versand per Post erweitert; Anfrageformular mit Lieferart. Startseite mit Landschaftsband (Wiese, Wald, Bienenstöcke, Parallax beim Scrollen), Hügelkanten an getönten Abschnitten, Bienen, die beim Drüberfahren über Produktlinks ausfliegen, Honigtropfen auf Produktkarten. Fehlende Angaben sind auf der Website sichtbar als Platzhalter markiert und in `dokumentation/Offene-Punkte.md` gesammelt; Fotohinweise in `dokumentation/Fotoanleitung.md`.
 
+## Fassung 06 (Feinschliff nach Rückmeldung)
+
+Die Website ist jetzt immer hell, ein Dark Mode ist bewusst abgeschaltet. Bienen fliegen frei per Script, schauen in Flugrichtung (nie mehr kopfüber), umkreisen neugierig Maus oder Finger und weichen schnellen Bewegungen aus. Der Bär schaut dem Zeiger nach, hüpft beim Antippen und sagt jedes Mal etwas anderes. Die Blumen sind vom Hero-Bild in die Landschaft gewandert. Die beiden Symbolfotos sind durch animierte Illustrationen im Markenstil ersetzt (Honigglas mit Löffel und Honigbrot, Wabe mit Tropfen), bis Thiemos eigene Fotos da sind; die Fotodateien bleiben ungenutzt im Ordner.
+
 ## Gestaltung & Technik
 
 Drei Markenfarben nach dem Prinzip eine ausgefallene, zwei fade: Honiggold #EFA51A, Bienenwachs #F6ECCB und Waldhonig #3A2410. Honiggold wird nur als Fläche verwendet, nie als Schrift auf hellem Grund. Wortmarke und Überschriften in Young Serif, Logozeile in Bricolage Grotesque (beide SIL Open Font License, aus dem Skill-Repository anthropics/skills). Die Website bindet Young Serif lokal als WOFF ein, ohne CDN; Fließtext in der Systemschrift. Keine Tracker, Cookies oder externen Bibliotheken. Helles und dunkles Farbschema, reduzierte Bewegung, sichtbare Tastaturfokusse und Mobilmenü.

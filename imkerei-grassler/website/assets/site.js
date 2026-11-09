@@ -31,14 +31,59 @@ function karte(main){
  pins.forEach(p=>{p.addEventListener('click',()=>{waehle(p.dataset.ort);const li=main.querySelector(`.orte-liste>li[data-ort="${p.dataset.ort}"]`);if(li&&matchMedia('(max-width:800px)').matches)li.scrollIntoView({behavior:'smooth',block:'center'});});p.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();p.dispatchEvent(new Event('click'));}});});
  main.querySelectorAll('.orte-liste>li[data-ort]').forEach(li=>li.addEventListener('mouseenter',()=>waehle(li.dataset.ort)));
 }
+/* Zeiger (Maus oder Finger) – gemeinsam für Bienen und Bär */
+const zeiger={x:-1e4,y:-1e4,v:0,t:0,maus:false,drin:false};
+(()=>{let lx=0,ly=0,lt=0;const neu=e=>{const n=performance.now(),dt=Math.max(n-lt,1);zeiger.v=Math.hypot(e.clientX-lx,e.clientY-ly)/dt;lx=zeiger.x=e.clientX;ly=zeiger.y=e.clientY;lt=zeiger.t=n;zeiger.maus=e.pointerType==='mouse';zeiger.drin=true;};
+ addEventListener('pointermove',neu,{passive:true});addEventListener('pointerdown',neu,{passive:true});
+ document.documentElement.addEventListener('mouseleave',()=>{zeiger.drin=false;});})();
+function zeigerAktiv(){return zeiger.drin&&(zeiger.maus||performance.now()-zeiger.t<3000);}
+/* Bienen: wandern frei, schauen in Flugrichtung, umkreisen neugierig den Zeiger, weichen schnellen Bewegungen aus */
+let schwarmLaeuft=false;const bienen=[];
+function schwarm(main,ruhig){
+ if(ruhig)return;
+ main.querySelectorAll('.flugraum').forEach(r=>{if(r.dataset.schwarm)return;r.dataset.schwarm='1';const rr=r.getBoundingClientRect();
+  r.querySelectorAll('.biene').forEach((el,i)=>bienen.push({el,r,i,x:Math.random()*Math.max(rr.width,200),y:Math.random()*Math.max(rr.height,120),vx:0,vy:0,tx:0,ty:0,neu:0,flucht:0,blick:1,ph:Math.random()*6}));
+  if('IntersectionObserver' in window)new IntersectionObserver(es=>es.forEach(e=>{e.target._sicht=e.isIntersecting;})).observe(r);else r._sicht=true;});
+ for(let k=bienen.length-1;k>=0;k--)if(!document.contains(bienen[k].el))bienen.splice(k,1);
+ if(schwarmLaeuft)return;schwarmLaeuft=true;let lt=performance.now();
+ const takt=ts=>{const f=Math.min((ts-lt)/16.7,3);lt=ts;const aktiv=zeigerAktiv();
+  for(const b of bienen){if(!b.r._sicht)continue;const R=b.r.getBoundingClientRect(),w=R.width,h=R.height;const px=zeiger.x-R.left,py=zeiger.y-R.top;
+   const nah=aktiv&&px>-160&&px<w+160&&py>-160&&py<h+160;let spd=1.5;
+   const dz=Math.hypot(b.x-px,b.y-py);
+   if(nah&&zeiger.v>1.4&&dz<90&&ts>b.flucht){b.tx=b.x+(b.x-px)/(dz||1)*190;b.ty=b.y+(b.y-py)/(dz||1)*190;b.flucht=ts+800;}
+   if(ts<b.flucht){spd=5;}
+   else if(nah){const a=ts/950*(b.i%2?1:-1)+b.i*2.2,rad=44+b.i*20;b.tx=px+Math.cos(a)*rad;b.ty=py+Math.sin(a)*rad*.7;spd=3;}
+   else if(ts>b.neu||Math.hypot(b.tx-b.x,b.ty-b.y)<18){const x0=b.r.parentElement.classList.contains('hero')&&w>800?.5:.06;b.tx=w*(x0+Math.random()*(.94-x0));b.ty=h*(.08+Math.random()*.84);b.neu=ts+2200+Math.random()*3200;}
+   b.tx=Math.max(-24,Math.min(w+24,b.tx));b.ty=Math.max(-24,Math.min(h+24,b.ty));
+   const dx=b.tx-b.x,dy=b.ty-b.y,d=Math.hypot(dx,dy)||1,s=Math.min(spd,d*.06+.25);
+   b.vx+=((dx/d)*s-b.vx)*.06*f;b.vy+=((dy/d)*s-b.vy)*.06*f+Math.sin(ts/170+b.ph)*.05*f;
+   b.x+=b.vx*f;b.y+=b.vy*f;
+   if(b.vx<-.2)b.blick=-1;else if(b.vx>.2)b.blick=1;
+   const neig=Math.max(-28,Math.min(28,b.vy*9));
+   b.el.style.transform=`translate(${(b.x-17).toFixed(1)}px,${(b.y-12).toFixed(1)}px) scaleX(${b.blick}) rotate(${neig.toFixed(1)}deg)`;}
+  requestAnimationFrame(takt);};
+ requestAnimationFrame(takt);
+}
+/* Bär: schaut dem Zeiger nach, hüpft und redet, wenn man ihn antippt */
+const BAER_SAETZE=['Nur zum Kosten …','Pfoten weg, des is meins!','Na guat, a Löfferl für di.','Mmh … Waldhonig!','Hast die Bienen gsehn?','Kitzelt!'];
+function baerSpiel(main){
+ const b=main.querySelector('.baer');if(!b||b.dataset.spiel)return;b.dataset.spiel='1';
+ const svg=b.querySelector('svg'),blick=b.querySelector('.blick'),blase=main.querySelector('.sprechblase');let satz=0,uhr;
+ const schau=()=>{if(!zeigerAktiv()){blick.style.transform='';return;}const r=svg.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;
+  const cx=r.left+r.width*110/280,cy=r.top+r.height*104/200,dx=zeiger.x-cx,dy=zeiger.y-cy,d=Math.hypot(dx,dy)||1,k=Math.min(1,d/160)*4;
+  blick.style.transform=`translate(${(dx/d*k).toFixed(2)}px,${(dy/d*k*.8).toFixed(2)}px)`;};
+ addEventListener('pointermove',schau,{passive:true});addEventListener('scroll',schau,{passive:true});
+ svg.addEventListener('pointerdown',e=>{if(!b.classList.contains('da'))return;b.classList.remove('huepf');void b.offsetWidth;b.classList.add('huepf');
+  satz=(satz+1)%BAER_SAETZE.length;if(blase){blase.textContent=BAER_SAETZE[satz];blase.classList.add('zeigen');clearTimeout(uhr);uhr=setTimeout(()=>blase.classList.remove('zeigen'),2600);}});
+ b.addEventListener('animationend',e=>{if(e.animationName==='huepf')b.classList.remove('huepf');});
+}
 function leben(){
  const ruhig=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const main=document.querySelector('main');
  bienenFuellen(main,ruhig);parallax(main,ruhig);hoverBienen(main,ruhig);zaehler();karte(main);
  const raum=main.querySelector('.hero,.page-intro');
- if(raum&&!raum.querySelector('.flugraum')&&!ruhig){const f=document.createElement('div');f.className='flugraum';f.setAttribute('aria-hidden','true');const n=raum.classList.contains('hero')?['b1','b2','b3']:['b1'];f.innerHTML=n.map(b=>`<div class="biene ${b}"><span>${BIENE}</span></div>`).join('');raum.prepend(f);}
- const fig=main.querySelector('.hero-image');
- if(fig&&!fig.querySelector('.blueten')){const b=document.createElement('div');b.className='blueten';b.setAttribute('aria-hidden','true');b.innerHTML=`<svg viewBox="0 0 120 110">${BLUETE(34,58,1.15,'#fffdf8')}${BLUETE(70,40,1.35,'#f6eccb')}${BLUETE(98,64,.95,'#fffdf8')}</svg>`;fig.append(b);}
+ if(raum&&!raum.querySelector('.flugraum')&&!ruhig){const f=document.createElement('div');f.className='flugraum';f.setAttribute('aria-hidden','true');const n=raum.classList.contains('hero')?['b1','b2','b3']:['b1','b2'];f.innerHTML=n.map(b=>`<div class="biene ${b}"><span>${BIENE}</span></div>`).join('');raum.prepend(f);}
+ schwarm(main,ruhig);baerSpiel(main);
  const baer=main.querySelector('.baer');
  const ziele=main.querySelectorAll('.section-head,.product-teaser,.split>*,.call-strip,.product-detail,.plain-list li,.region-panel,.contact-aside,.form-grid');
  if(ruhig||!('IntersectionObserver' in window)){baer?.classList.add('da');return;}

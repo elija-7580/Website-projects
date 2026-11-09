@@ -47,6 +47,10 @@ Neue Seiten **Standorte** (illustrierte Karte des Kamptals mit Stand Wolfshof un
 
 Die Website ist jetzt immer hell, ein Dark Mode ist bewusst abgeschaltet. Bienen fliegen frei per Script, schauen in Flugrichtung (nie mehr kopfüber), umkreisen neugierig Maus oder Finger und weichen schnellen Bewegungen aus. Der Bär schaut dem Zeiger nach, hüpft beim Antippen und sagt jedes Mal etwas anderes. Die Blumen sind vom Hero-Bild in die Landschaft gewandert. Die beiden Symbolfotos sind durch animierte Illustrationen im Markenstil ersetzt (Honigglas mit Löffel und Honigbrot, Wabe mit Tropfen), bis Thiemos eigene Fotos da sind; die Fotodateien bleiben ungenutzt im Ordner.
 
+## Fassung 07
+
+Weniger Bienen (Startseite 3 statt 8), weiches Umdrehen, fliegen über allen Elementen. Illustrationen ohne eckigen Rahmen, frei auf der Seite. Wabe neu: organische Form, Honig tropft nur aus vollen Zellen, Tropfen wachsen und fallen. Neue Seite `fuer-thiemo.html`: Checkliste mit allen offenen Angaben und Fotoanleitung mit zehn Motiven zum Abhaken oder Ausdrucken.
+
 ## Gestaltung & Technik
 
 Drei Markenfarben nach dem Prinzip eine ausgefallene, zwei fade: Honiggold #EFA51A, Bienenwachs #F6ECCB und Waldhonig #3A2410. Honiggold wird nur als Fläche verwendet, nie als Schrift auf hellem Grund. Wortmarke und Überschriften in Young Serif, Logozeile in Bricolage Grotesque (beide SIL Open Font License, aus dem Skill-Repository anthropics/skills). Die Website bindet Young Serif lokal als WOFF ein, ohne CDN; Fließtext in der Systemschrift. Keine Tracker, Cookies oder externen Bibliotheken. Helles und dunkles Farbschema, reduzierte Bewegung, sichtbare Tastaturfokusse und Mobilmenü.

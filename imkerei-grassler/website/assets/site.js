@@ -23,7 +23,7 @@ function hoverBienen(main,ruhig){
 function zaehler(){
  const bar=document.querySelector('.preview-bar');if(!bar)return;bar.querySelector('.zaehler')?.remove();
  const n=document.querySelectorAll('main .platzhalter, main .fehlt').length;if(!n)return;
- const z=document.createElement('span');z.className='zaehler';z.innerHTML=`· <a href="freigabe.html#platzhalter">${n} Platzhalter auf dieser Seite</a>`;bar.append(z);
+ const z=document.createElement('span');z.className='zaehler';z.innerHTML=`· <a href="fuer-thiemo.html">${n} Platzhalter auf dieser Seite</a>`;bar.append(z);
 }
 function karte(main){
  const pins=main.querySelectorAll('.karte .pin');if(!pins.length)return;
@@ -42,7 +42,7 @@ let schwarmLaeuft=false;const bienen=[];
 function schwarm(main,ruhig){
  if(ruhig)return;
  main.querySelectorAll('.flugraum').forEach(r=>{if(r.dataset.schwarm)return;r.dataset.schwarm='1';const rr=r.getBoundingClientRect();
-  r.querySelectorAll('.biene').forEach((el,i)=>bienen.push({el,r,i,x:Math.random()*Math.max(rr.width,200),y:Math.random()*Math.max(rr.height,120),vx:0,vy:0,tx:0,ty:0,neu:0,flucht:0,blick:1,ph:Math.random()*6}));
+  r.querySelectorAll('.biene').forEach((el,i)=>bienen.push({el,r,i,x:(r.parentElement.classList.contains('hero')&&rr.width>800?.55+Math.random()*.4:Math.random())*Math.max(rr.width,200),y:Math.random()*Math.max(rr.height,120),vx:0,vy:0,tx:0,ty:0,neu:0,flucht:0,blick:1,ph:Math.random()*6}));
   if('IntersectionObserver' in window)new IntersectionObserver(es=>es.forEach(e=>{e.target._sicht=e.isIntersecting;})).observe(r);else r._sicht=true;});
  for(let k=bienen.length-1;k>=0;k--)if(!document.contains(bienen[k].el))bienen.splice(k,1);
  if(schwarmLaeuft)return;schwarmLaeuft=true;let lt=performance.now();
@@ -58,9 +58,11 @@ function schwarm(main,ruhig){
    const dx=b.tx-b.x,dy=b.ty-b.y,d=Math.hypot(dx,dy)||1,s=Math.min(spd,d*.06+.25);
    b.vx+=((dx/d)*s-b.vx)*.06*f;b.vy+=((dy/d)*s-b.vy)*.06*f+Math.sin(ts/170+b.ph)*.05*f;
    b.x+=b.vx*f;b.y+=b.vy*f;
-   if(b.vx<-.2)b.blick=-1;else if(b.vx>.2)b.blick=1;
-   const neig=Math.max(-28,Math.min(28,b.vy*9));
-   b.el.style.transform=`translate(${(b.x-17).toFixed(1)}px,${(b.y-12).toFixed(1)}px) scaleX(${b.blick}) rotate(${neig.toFixed(1)}deg)`;}
+   if(b.vx<-.5)b.blick=-1;else if(b.vx>.5)b.blick=1;
+   b.sx=(b.sx??b.blick)+(b.blick-(b.sx??b.blick))*.09*f;
+   const sx=Math.sign(b.sx||1)*Math.max(Math.abs(b.sx),.18);
+   b.rot=(b.rot||0)+(Math.max(-20,Math.min(20,b.vy*7))-(b.rot||0))*.08*f;
+   b.el.style.transform=`translate(${(b.x-17).toFixed(1)}px,${(b.y-12).toFixed(1)}px) scaleX(${sx.toFixed(3)}) rotate(${b.rot.toFixed(1)}deg)`;}
   requestAnimationFrame(takt);};
  requestAnimationFrame(takt);
 }
@@ -82,7 +84,7 @@ function leben(){
  const main=document.querySelector('main');
  bienenFuellen(main,ruhig);parallax(main,ruhig);hoverBienen(main,ruhig);zaehler();karte(main);
  const raum=main.querySelector('.hero,.page-intro');
- if(raum&&!raum.querySelector('.flugraum')&&!ruhig){const f=document.createElement('div');f.className='flugraum';f.setAttribute('aria-hidden','true');const n=raum.classList.contains('hero')?['b1','b2','b3']:['b1','b2'];f.innerHTML=n.map(b=>`<div class="biene ${b}"><span>${BIENE}</span></div>`).join('');raum.prepend(f);}
+ if(raum&&!raum.querySelector('.flugraum')&&!ruhig){const f=document.createElement('div');f.className='flugraum';f.setAttribute('aria-hidden','true');const n=raum.classList.contains('hero')?['b1','b2']:['b1'];f.innerHTML=n.map(b=>`<div class="biene ${b}"><span>${BIENE}</span></div>`).join('');raum.prepend(f);}
  schwarm(main,ruhig);baerSpiel(main);
  const baer=main.querySelector('.baer');
  const ziele=main.querySelectorAll('.section-head,.product-teaser,.split>*,.call-strip,.product-detail,.plain-list li,.region-panel,.contact-aside,.form-grid');

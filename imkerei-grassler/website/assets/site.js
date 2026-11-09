@@ -1,8 +1,40 @@
 const BIENE='<svg viewBox="-20 -16 40 30" aria-hidden="true"><g class="fluegel"><ellipse cx="-3" cy="-8" rx="7" ry="5" fill="#fff" fill-opacity=".8" stroke="#3a2410" stroke-width="1"/><ellipse cx="4" cy="-8.5" rx="6" ry="4.5" fill="#fff" fill-opacity=".8" stroke="#3a2410" stroke-width="1"/></g><path d="M-12 2l-5 1 5 1z" fill="#3a2410"/><ellipse cx="0" cy="2" rx="12" ry="8" fill="#efa51a" stroke="#3a2410" stroke-width="1.4"/><path d="M-4.5-5v14.5M2.5-5.5v15" stroke="#3a2410" stroke-width="3"/><circle cx="12" cy="1" r="5" fill="#3a2410"/><circle cx="13.6" cy="-.4" r="1.3" fill="#fff"/></svg>';
 const BLUETE=(x,y,s,c)=>`<g class="bl"><path d="M${x} ${y+40}q-2-24 0-40" stroke="#6f7f34" stroke-width="2.2" fill="none"/><path d="M${x} ${y+28}q-14-4-16-14q12 0 16 14z" fill="#8a9a45"/><g transform="translate(${x} ${y}) scale(${s})">${[0,72,144,216,288].map(r=>`<ellipse cx="0" cy="-9" rx="5.5" ry="9" transform="rotate(${r})" fill="${c}" stroke="#3a2410" stroke-opacity=".35"/>`).join('')}<circle r="5" fill="#efa51a" stroke="#3a2410" stroke-opacity=".5"/></g></g>`;
+function bienenFuellen(main,ruhig){
+ if(ruhig)return;
+ main.querySelectorAll('[data-bienen]').forEach(el=>{if(el.querySelector('.flugraum'))return;const f=document.createElement('div');f.className='flugraum';f.setAttribute('aria-hidden','true');f.innerHTML=el.dataset.bienen.split(',').map(b=>`<div class="biene ${b}"><span>${BIENE}</span></div>`).join('');el.prepend(f);});
+}
+function parallax(main,ruhig){
+ const band=main.querySelector('.landschaft');if(!band||ruhig)return;
+ const ebenen=[...band.querySelectorAll('.ebene')];let lauf=false;
+ const rechne=()=>{lauf=false;const r=band.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;const d=(innerHeight-r.top)/(innerHeight+r.height)-.5;ebenen.forEach(e=>{e.style.transform=`translateY(${(d*(+e.dataset.tiefe||0)).toFixed(1)}px)`;});};
+ addEventListener('scroll',()=>{if(!lauf){lauf=true;requestAnimationFrame(rechne);}},{passive:true});rechne();
+}
+function hoverBienen(main,ruhig){
+ if(ruhig||!matchMedia('(hover: hover)').matches)return;
+ main.querySelectorAll('.product-teaser .text-link,.product-request,.neu-streifen,.paket .text-link').forEach(a=>{
+  a.classList.add('hb-wirt');
+  a.addEventListener('mouseenter',()=>{if(a.querySelector('.hb'))return;const w=a.offsetWidth,h=a.offsetHeight;const zx=Math.max(w-14,20),zy=Math.min(h/2-12,-4);
+   const b=document.createElement('span');b.className='hb';b.setAttribute('aria-hidden','true');b.innerHTML=BIENE;
+   b.style.offsetPath=`path("M -40 ${h+10} C ${w*.2} -60, ${w*.55} ${h+30}, ${w*.7} ${-24} S ${zx+30} ${zy-30}, ${zx} ${zy}")`;
+   a.append(b);b.addEventListener('animationend',()=>b.remove());});
+ });
+}
+function zaehler(){
+ const bar=document.querySelector('.preview-bar');if(!bar)return;bar.querySelector('.zaehler')?.remove();
+ const n=document.querySelectorAll('main .platzhalter, main .fehlt').length;if(!n)return;
+ const z=document.createElement('span');z.className='zaehler';z.innerHTML=`· <a href="freigabe.html#platzhalter">${n} Platzhalter auf dieser Seite</a>`;bar.append(z);
+}
+function karte(main){
+ const pins=main.querySelectorAll('.karte .pin');if(!pins.length)return;
+ const waehle=id=>{main.querySelectorAll('.karte .pin,.orte-liste>li').forEach(e=>e.classList.toggle('aktiv',e.dataset.ort===id));};
+ pins.forEach(p=>{p.addEventListener('click',()=>{waehle(p.dataset.ort);const li=main.querySelector(`.orte-liste>li[data-ort="${p.dataset.ort}"]`);if(li&&matchMedia('(max-width:800px)').matches)li.scrollIntoView({behavior:'smooth',block:'center'});});p.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();p.dispatchEvent(new Event('click'));}});});
+ main.querySelectorAll('.orte-liste>li[data-ort]').forEach(li=>li.addEventListener('mouseenter',()=>waehle(li.dataset.ort)));
+}
 function leben(){
  const ruhig=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const main=document.querySelector('main');
+ bienenFuellen(main,ruhig);parallax(main,ruhig);hoverBienen(main,ruhig);zaehler();karte(main);
  const raum=main.querySelector('.hero,.page-intro');
  if(raum&&!raum.querySelector('.flugraum')&&!ruhig){const f=document.createElement('div');f.className='flugraum';f.setAttribute('aria-hidden','true');const n=raum.classList.contains('hero')?['b1','b2','b3']:['b1'];f.innerHTML=n.map(b=>`<div class="biene ${b}"><span>${BIENE}</span></div>`).join('');raum.prepend(f);}
  const fig=main.querySelector('.hero-image');
@@ -32,7 +64,7 @@ function init(){leben();
  function sizes(){let allowed=prod.value==='Honigwaben'?['250 g','2 kg']:['Waldhonig','Cremehonig'].includes(prod.value)?['250 g','500 g']:['250 g','500 g','2 kg'];[...size.options].forEach(o=>o.disabled=!!o.value&&!allowed.includes(o.value));if(size.selectedOptions[0]?.disabled)size.value='';}sizes();
  if([...size.options].some(o=>o.value===p.get('groesse')&&!o.disabled))size.value=p.get('groesse');prod.addEventListener('change',sizes);
  const reply=document.querySelector('#reply');reply.addEventListener('input',()=>reply.setCustomValidity(''));
- form.addEventListener('submit',e=>{e.preventDefault();const nameField=document.querySelector('#name');if(!nameField.value.trim()){nameField.setCustomValidity('Bitte deinen Namen eintragen.');nameField.reportValidity();nameField.addEventListener('input',()=>nameField.setCustomValidity(''),{once:true});return;}const v=reply.value.trim();const valid=v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^[+\d\s()/.-]+$/.test(v)&&v.replace(/\D/g,'').length>=6;if(!valid){reply.setCustomValidity('Bitte eine gültige E-Mail-Adresse oder Telefonnummer eintragen.');reply.reportValidity();return;}const f=new FormData(form);const text=`Hallo Thiemo,\n\nich möchte folgenden Honig anfragen:\n\nProdukt: ${f.get('product')||'noch offen'}\nGröße: ${f.get('size')||'noch offen'}\nMenge: ${String(f.get('quantity')).trim()||'noch offen'}\n\n${String(f.get('message')).trim()}\n\nBitte gib mir Bescheid, was verfügbar ist, was es kostet und wann eine Übergabe möglich wäre.\n\n${String(f.get('name')).trim()}\nRückmeldung an: ${v}`;document.querySelector('#draft-text').value=text.replace(/\n{3,}/g,'\n\n');document.querySelector('#draft').hidden=false;document.querySelector('#draft-heading').focus();});
+ form.addEventListener('submit',e=>{e.preventDefault();const nameField=document.querySelector('#name');if(!nameField.value.trim()){nameField.setCustomValidity('Bitte deinen Namen eintragen.');nameField.reportValidity();nameField.addEventListener('input',()=>nameField.setCustomValidity(''),{once:true});return;}const v=reply.value.trim();const valid=v.includes('@')?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v):/^[+\d\s()/.-]+$/.test(v)&&v.replace(/\D/g,'').length>=6;if(!valid){reply.setCustomValidity('Bitte eine gültige E-Mail-Adresse oder Telefonnummer eintragen.');reply.reportValidity();return;}const f=new FormData(form);const text=`Hallo Thiemo,\n\nich möchte folgenden Honig anfragen:\n\nProdukt: ${f.get('product')||'noch offen'}\nGröße: ${f.get('size')||'noch offen'}\nMenge: ${String(f.get('quantity')).trim()||'noch offen'}\nLieferung: ${f.get('delivery')||'noch offen'}\n\n${String(f.get('message')).trim()}\n\nBitte gib mir Bescheid, was verfügbar ist, was es kostet und wann eine Übergabe bzw. der Versand möglich wäre.\n\n${String(f.get('name')).trim()}\nRückmeldung an: ${v}`;document.querySelector('#draft-text').value=text.replace(/\n{3,}/g,'\n\n');document.querySelector('#draft').hidden=false;document.querySelector('#draft-heading').focus();});
  document.querySelector('#copy').onclick=async()=>{const el=document.querySelector('#draft-text'),s=document.querySelector('#copy-status');try{if(!navigator.clipboard)throw new Error();await navigator.clipboard.writeText(el.value);s.textContent='Kopiert. Die Anfrage wurde nicht versendet.';}catch{el.focus();el.select();s.textContent='Bitte den markierten Text mit Strg+C bzw. ⌘C kopieren. Die Anfrage wurde nicht versendet.';}};
  document.querySelector('#save').onclick=()=>{const u=URL.createObjectURL(new Blob([document.querySelector('#draft-text').value],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download='Anfrage-Imkerei-Grassler.txt';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);document.querySelector('#copy-status').textContent='Textdatei vorbereitet. Die Anfrage wurde nicht versendet.';};
 }

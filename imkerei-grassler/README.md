@@ -39,6 +39,10 @@ Größenauswahl wird ins Formular übernommen. Das Formular prüft Pflichtfelder
 
 Hellere Grundfläche mit warmem Lichtverlauf, Bienenwachs nur noch in getönten Abschnitten mit leichtem Wabenmuster. Fliegende Bienen in Hero und Seitenköpfen, wiegende Blüten am Hero-Bild, Honigtropfen an der Goldlinie, Einblenden beim Scrollen, Hover-Bewegungen. Auf der Startseite klettert ein eigener Bär im Markenstil (flach, nur Waldhonig, Bienenwachs und Gold, Honigglas wie im Logo) über den Gastronomie-Streifen, schaut zum Glas, rührt, schleckt die Tatze ab und kneift genüsslich die Augen zu; ein Tropfen fällt zurück ins Glas. Im Dark Mode kehren sich Fell und Akzent um („Nur zum Kosten …“). Alles reines CSS/SVG ohne Bibliotheken; bei „Bewegung reduzieren“ stehen Bienen, Tropfen und Bär still.
 
+## Fassung 05 (neue Inhalte, mit Platzhaltern)
+
+Neue Seiten **Standorte** (illustrierte Karte des Kamptals mit Stand Wolfshof und dem kommenden Stand bei Schönberg am Kamp, Einkaufsmöglichkeiten) und **Bienenstock-Partnerschaft** (Ablauf, drei Paketvorschläge). Honigseite um vier verfeinerte Sorten, Fotoplätze und Versand per Post erweitert; Anfrageformular mit Lieferart. Startseite mit Landschaftsband (Wiese, Wald, Bienenstöcke, Parallax beim Scrollen), Hügelkanten an getönten Abschnitten, Bienen, die beim Drüberfahren über Produktlinks ausfliegen, Honigtropfen auf Produktkarten. Fehlende Angaben sind auf der Website sichtbar als Platzhalter markiert und in `dokumentation/Offene-Punkte.md` gesammelt; Fotohinweise in `dokumentation/Fotoanleitung.md`.
+
 ## Gestaltung & Technik
 
 Drei Markenfarben nach dem Prinzip eine ausgefallene, zwei fade: Honiggold #EFA51A, Bienenwachs #F6ECCB und Waldhonig #3A2410. Honiggold wird nur als Fläche verwendet, nie als Schrift auf hellem Grund. Wortmarke und Überschriften in Young Serif, Logozeile in Bricolage Grotesque (beide SIL Open Font License, aus dem Skill-Repository anthropics/skills). Die Website bindet Young Serif lokal als WOFF ein, ohne CDN; Fließtext in der Systemschrift. Keine Tracker, Cookies oder externen Bibliotheken. Helles und dunkles Farbschema, reduzierte Bewegung, sichtbare Tastaturfokusse und Mobilmenü.

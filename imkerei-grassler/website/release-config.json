@@ -10,5 +10,12 @@
   "photosApproved": false,
   "imprintReviewed": false,
   "privacyReviewed": false,
-  "contactDeliveryTested": false
+  "contactDeliveryTested": false,
+  "beehiveLocationsApproved": false,
+  "pickupAddressConfirmed": false,
+  "shippingTermsConfirmed": false,
+  "distanceSellingLegalReviewed": false,
+  "newVarietiesLabelsApproved": false,
+  "partnershipTermsConfirmed": false,
+  "ownProductPhotos": false
 }

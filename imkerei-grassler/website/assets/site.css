@@ -133,3 +133,116 @@ body{background:radial-gradient(1100px 620px at 92% -8%,rgba(239,165,26,.17),tra
 @keyframes blase{0%,52%,76%,100%{opacity:0;transform:translateY(8px) scale(.92)}55%,72%{opacity:1;transform:none}}
 @media(max-width:800px){.call-strip.mit-baer{margin-top:150px}.baer-buehne{right:4px;width:224px;height:160px}.sprechblase{right:168px;bottom:calc(100% + 108px);font-size:16px;padding:7px 12px 8px}}
 @media(prefers-reduced-motion:reduce){.flugraum,.service-line::after{display:none}.js .reveal{opacity:1;transform:none}.baer{transform:none}.baer *,.sprechblase{animation:none!important}.sprechblase{opacity:1;transform:none}}
+
+/* ── Fassung 05: Platzhalter, Landschaft, Interaktionen, Karte, Partnerschaft ── */
+/* Platzhalter – sichtbar markiert, bis Thiemo liefert */
+.platzhalter{position:relative;border:1.5px dashed color-mix(in srgb,var(--ink) 45%,transparent);background:repeating-linear-gradient(135deg,transparent 0 11px,color-mix(in srgb,var(--ink) 4.5%,transparent) 11px 22px);padding:22px 20px 18px;margin-top:14px}
+.platzhalter::before{content:"Platzhalter";position:absolute;top:-11px;left:14px;background:#3a2410;color:#f6eccb;font:600 11px/1 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:5px 9px;border-radius:999px}
+@media(prefers-color-scheme:dark){.platzhalter::before{background:#f6eccb;color:#3a2410}}
+.platzhalter p{font-size:15px;margin-top:6px}.platzhalter p:first-of-type{margin-top:0}
+.platzhalter b{display:block;font-size:15px;margin-bottom:4px}
+.fehlt{background:color-mix(in srgb,var(--accent) 24%,transparent);border-bottom:1.5px dashed currentColor;padding:0 5px;font-style:normal;white-space:nowrap}
+.fehlt::before{content:"fehlt: ";font:600 11px/1 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.foto-platz{display:grid;place-items:center;text-align:center;aspect-ratio:3/2;margin:0 0 20px;padding:20px}
+.foto-platz svg{width:38px;height:38px;margin:0 auto 8px;opacity:.7}
+.foto-platz p{font-size:14px;max-width:30ch;margin:0 auto}
+.preview-bar .zaehler{margin-left:6px}
+/* Neue-Sorten-Streifen auf der Startseite */
+.neu-streifen{display:flex;align-items:center;justify-content:space-between;gap:28px;margin-top:44px;padding:22px 26px;border:1px solid var(--line);text-decoration:none;transition:border-color .3s,background .3s}
+.neu-streifen:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.neu-streifen .eyebrow{margin:0 0 4px}.neu-streifen strong{font:400 26px/1.15 'Young Serif',Georgia,serif}
+.sorten-icons{display:flex;gap:10px;flex-shrink:0}
+.sorten-icons svg,.sorte-icon{width:56px;height:56px;flex-shrink:0;transition:transform .4s cubic-bezier(.3,1.4,.5,1)}
+.neu-streifen:hover .sorten-icons svg{transform:translateY(-4px) rotate(-6deg)}
+.neu-streifen:hover .sorten-icons svg:nth-child(2n){transform:translateY(-4px) rotate(6deg)}
+@media(max-width:800px){.neu-streifen{display:block}.sorten-icons{margin-top:16px}.sorten-icons svg{width:46px;height:46px}}
+/* Verfeinerte Sorten auf der Honigseite */
+.verfeinert-head{padding:56px 0 8px;border-top:1px solid var(--line);margin-top:24px}
+.verfeinert-head p{max-width:56ch;margin-top:14px}
+.sorte-kopf{display:flex;align-items:center;gap:16px}
+.sorte-kopf .sorte-icon{width:64px;height:64px}
+.vormerk-box{padding:24px;border:1px solid var(--line);background:var(--soft)}
+.vormerk-box .button{width:100%;margin-top:16px}
+.vormerk-box small{display:block;margin-top:12px;font-size:14px}
+/* Karten-Tropfen beim Drüberfahren */
+.product-teaser{position:relative;transition:transform .4s cubic-bezier(.2,.7,.2,1),border-color .4s}
+.product-teaser::before{content:"";position:absolute;top:-2px;left:26px;width:8px;height:0;background:var(--accent);border-radius:0 0 5px 5px;transition:height .7s cubic-bezier(.3,0,.3,1)}
+.product-teaser:hover{border-top-color:var(--accent)}
+.product-teaser:hover::before{height:22px}
+/* Hover-Bienen an Produktlinks */
+.hb-wirt{position:relative}
+.hb{position:absolute;top:0;left:0;width:26px;height:20px;pointer-events:none;offset-rotate:auto;animation:hb-flug 2.2s cubic-bezier(.35,0,.25,1) forwards;z-index:3}
+.hb svg{width:26px;height:20px;overflow:visible}
+.hb .fluegel{transform-box:fill-box;transform-origin:50% 100%;animation:flattern .08s linear infinite alternate}
+@keyframes hb-flug{0%{offset-distance:0%;opacity:0}8%{opacity:1}62%{offset-distance:100%;transform:none}70%{offset-distance:100%;transform:translateY(-2px)}78%{offset-distance:100%;transform:none;opacity:1}100%{offset-distance:100%;transform:translate(70px,-60px);opacity:0}}
+/* Landschaftsband */
+.landschaft{position:relative;height:250px;margin-top:-8px;overflow:hidden;pointer-events:none}
+.landschaft svg{position:absolute;left:0;bottom:0;width:100%;height:100%}
+.landschaft .ebene{will-change:transform}
+.landschaft .tinte{fill:var(--ink)}.landschaft .papier{fill:var(--paper)}.landschaft .gold{fill:var(--accent)}.landschaft .wachs{fill:#f6eccb}
+.landschaft .flugraum{z-index:1}
+.landschaft .baum{transform-box:fill-box;transform-origin:50% 100%;animation:wiegen 7s ease-in-out infinite alternate}
+.landschaft .baum:nth-child(3n){animation-duration:9s;animation-delay:-3s}.landschaft .baum:nth-child(4n){animation-duration:6s;animation-delay:-1s}
+.landschaft .gras{transform-box:fill-box;transform-origin:50% 100%;animation:wiegen 3.5s ease-in-out infinite alternate}
+.landschaft .biene.l1{offset-path:path("M900 120 C980 40 1120 90 1060 150 S860 200 900 120");--t:15s}
+.landschaft .biene.l2{offset-path:path("M300 150 C380 80 520 120 470 170 S260 210 300 150");--t:18s;--dl:-5s}
+.landschaft .biene.l3{offset-path:path("M1180 160 C1250 110 1320 150 1290 190 S1150 210 1180 160");--t:11s;--dl:-2s}
+@media(max-width:800px){.landschaft{height:150px}.landschaft .biene.l1{offset-path:path("M220 70 C280 20 360 60 320 100 S180 120 220 70")}.landschaft .biene.l2,.landschaft .biene.l3{display:none}}
+@media(prefers-color-scheme:dark){.landschaft .wachs{fill:#f6eccb}}
+/* Sanfte Hügelkanten an getönten Abschnitten */
+.tinted::before,.tinted::after{content:"";position:absolute;left:0;right:0;height:34px;pointer-events:none;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 34' preserveAspectRatio='none'%3E%3Cpath d='M0 34V22C180 4 330 2 520 14S900 34 1100 18 1340 4 1440 12V34Z'/%3E%3C/svg%3E") 0 0/100% 100%;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 34' preserveAspectRatio='none'%3E%3Cpath d='M0 34V22C180 4 330 2 520 14S900 34 1100 18 1340 4 1440 12V34Z'/%3E%3C/svg%3E") 0 0/100% 100%}
+.tinted::before{top:-33px;background:#f6eccb}
+.tinted::after{bottom:-1px;background:var(--paper);transform:scaleX(-1)}
+@media(prefers-color-scheme:dark){.tinted::before{background:#45301a}}
+/* Standorte-Karte */
+.karten-layout{display:grid;grid-template-columns:1.15fr 1fr;gap:48px;align-items:start;padding-bottom:72px}
+.karte{position:relative;background:#f6eccb;border-radius:4px;overflow:hidden}
+.karte svg{display:block;width:100%;height:auto}
+.karte .fluss{fill:none;stroke:#efa51a;stroke-linecap:round;stroke-linejoin:round}
+.karte .ort circle{fill:#3a2410}.karte .ort text{font:13px system-ui,sans-serif;fill:#3a2410}
+.karte .ort.gross text{font:400 17px 'Young Serif',Georgia,serif}
+.karte .land{fill:#3a2410;opacity:.07}
+.karte .pin{cursor:pointer;outline:none}
+.karte .pin .hof{fill:#efa51a;opacity:.28;transform-box:fill-box;transform-origin:50% 50%;animation:atmen-hof 3.2s ease-in-out infinite alternate}
+.karte .pin.bald .hof{fill:none;stroke:#3a2410;stroke-width:2;stroke-dasharray:5 6;opacity:.7;animation:drehen 18s linear infinite}
+.karte .pin .kopf{transition:transform .35s cubic-bezier(.3,1.5,.5,1);transform-box:fill-box;transform-origin:50% 100%}
+.karte .pin:hover .kopf,.karte .pin:focus-visible .kopf,.karte .pin.aktiv .kopf{transform:scale(1.18) translateY(-3px)}
+.karte .pin:focus-visible .hof{stroke:#3a2410;stroke-width:3}
+@keyframes atmen-hof{from{transform:scale(.9)}to{transform:scale(1.08)}}
+@keyframes drehen{to{transform:rotate(360deg)}}
+.karte .massstab{font:12px system-ui,sans-serif;fill:#3a2410;opacity:.7}
+.karte-hinweis{font-size:13px;margin-top:10px;color:var(--muted)}
+.orte-liste{list-style:none;margin:0;padding:0}
+.orte-liste>li{padding:22px 0;border-top:1px solid var(--line);transition:background .4s}
+.orte-liste>li.aktiv{background:color-mix(in srgb,var(--accent) 12%,transparent);box-shadow:-14px 0 0 color-mix(in srgb,var(--accent) 12%,transparent),14px 0 0 color-mix(in srgb,var(--accent) 12%,transparent)}
+.orte-liste h3{font-size:26px;display:flex;align-items:center;gap:10px}
+.orte-liste .marke{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.orte-liste .marke.bald{background:transparent;border:2px dashed var(--ink)}
+.orte-liste .marke.kauf{border-radius:3px;background:var(--ink)}
+.orte-liste p{margin-top:8px;max-width:46ch}
+.status{display:inline-block;font:600 12px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:6px 9px;border-radius:999px;background:var(--accent);color:#3a2410;margin-top:10px}
+.status.bald{background:transparent;border:1.5px dashed var(--ink);color:var(--ink)}
+@media(max-width:800px){.karten-layout{grid-template-columns:1fr;gap:28px}}
+/* Partnerschaft */
+.pakete{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:8px}
+.paket{border-top:2px solid var(--ink);padding-top:22px;position:relative;transition:transform .4s cubic-bezier(.2,.7,.2,1),border-color .4s}
+.paket:hover{transform:translateY(-4px);border-top-color:var(--accent)}
+.paket h3{font-size:30px}
+.paket .fuer{font-size:14px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:6px 0 14px}
+.paket ul{padding-left:18px;margin:14px 0 0}.paket li{margin-bottom:6px}
+.paket .preis{font:400 26px/1.2 'Young Serif',Georgia,serif;margin-top:16px}
+.schritte{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;counter-reset:s}
+.schritte li{counter-increment:s;padding-top:18px;border-top:1px solid var(--line)}
+.schritte li::before{content:counter(s);display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#3a2410;font:400 22px 'Young Serif',Georgia,serif;margin-bottom:14px}
+.schritte b{display:block;font-size:18px;margin-bottom:6px}
+.stock-bild{position:relative;max-width:360px;margin:0 auto}
+.stock-bild svg{width:100%;height:auto;overflow:visible}
+.stock-bild .schild text{font:400 20px 'Young Serif',Georgia,serif;fill:#3a2410}
+.stock-bild .flugraum{inset:-10% -20%}
+.stock-bild .biene.s1{offset-path:path("M300 20 C380 -20 420 60 360 90 S260 60 300 20");--t:9s}
+.stock-bild .biene.s2{offset-path:path("M40 210 C-20 150 30 110 70 160 S90 250 40 210");--t:12s;--dl:-4s}
+@media(max-width:800px){.pakete,.schritte{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.hb,.landschaft .flugraum{display:none}.landschaft .ebene{transform:none!important}}
+
+.product-detail{align-items:start}.product-detail .foto-platz{aspect-ratio:5/2}@media(max-width:800px){.product-detail .foto-platz{aspect-ratio:16/9}}
+@media(prefers-color-scheme:dark){.stock-bild .dach{fill:#f6eccb}}

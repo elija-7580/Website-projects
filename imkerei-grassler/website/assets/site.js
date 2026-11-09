@@ -34,8 +34,9 @@ function karte(main){
 /* Zeiger (Maus oder Finger) – gemeinsam für Bienen und Bär */
 const zeiger={x:-1e4,y:-1e4,v:0,t:0,maus:false,drin:false};
 (()=>{let lx=0,ly=0,lt=0;const neu=e=>{const n=performance.now(),dt=Math.max(n-lt,1);zeiger.v=Math.hypot(e.clientX-lx,e.clientY-ly)/dt;lx=zeiger.x=e.clientX;ly=zeiger.y=e.clientY;lt=zeiger.t=n;zeiger.maus=e.pointerType==='mouse';zeiger.drin=true;};
- addEventListener('pointermove',neu,{passive:true});addEventListener('pointerdown',neu,{passive:true});
+ addEventListener('pointermove',neu,{passive:true});addEventListener('pointerdown',e=>{neu(e);antippen(e.clientX,e.clientY);},{passive:true});
  document.documentElement.addEventListener('mouseleave',()=>{zeiger.drin=false;});})();
+function antippen(x,y){const n=performance.now();for(const b of bienen){const R=b.r.getBoundingClientRect(),bx=R.left+b.x,by=R.top+b.y,d=Math.hypot(bx-x,by-y);if(d<48){const w=Math.atan2(by-y,bx-x)||-1.2;b.tx=b.x+Math.cos(w)*220;b.ty=b.y+Math.sin(w)*220-60;b.flucht=n+1100;b.el.classList.remove('kreisel');void b.el.offsetWidth;b.el.classList.add('kreisel');setTimeout(()=>b.el.classList.remove('kreisel'),800);}}}
 function zeigerAktiv(){return zeiger.drin&&(zeiger.maus||performance.now()-zeiger.t<3000);}
 /* Bienen: wandern frei, schauen in Flugrichtung, umkreisen neugierig den Zeiger, weichen schnellen Bewegungen aus */
 let schwarmLaeuft=false;const bienen=[];

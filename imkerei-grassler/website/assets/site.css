@@ -278,7 +278,7 @@ body{background:radial-gradient(1100px 620px at 92% -8%,rgba(239,165,26,.17),tra
 @keyframes wtropfen{0%{transform:scaleY(.3)}70%{transform:scaleY(1.15)}85%{transform:scaleY(.4)}100%{transform:scaleY(.3)}}
 @media(max-width:800px){.illu-rahmen svg.illu{height:300px}.large-figure .illu-rahmen svg.illu{height:340px}}
 @media(prefers-reduced-motion:reduce){.illu *{animation:none!important}}
-@media(max-width:800px){.sprechblase{left:0;right:auto;max-width:165px;white-space:normal;font-size:15px;line-height:1.25;border-radius:18px 18px 18px 4px;transform-origin:0 100%}}
+@media(max-width:800px){.sprechblase{left:0;right:auto;max-width:165px;white-space:normal;font-size:15px;line-height:1.25;border-radius:18px 18px 4px 18px;transform-origin:100% 100%}}
 
 /* Fassung 07 */
 .flugraum{z-index:30}
@@ -354,3 +354,7 @@ body{background:radial-gradient(1100px 620px at 92% -8%,rgba(239,165,26,.17),tra
 @media(max-width:1000px){.vorteile{grid-template-columns:1fr 1fr}.ideen{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.vorteile,.ideen{grid-template-columns:1fr}.speisekarte{padding:26px 22px}}
 .speisekarte{position:relative}.sk-beispiel{position:absolute;top:-11px;left:24px;background:#3a2410;color:#f6eccb;font:600 11px/1 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:5px 9px;border-radius:999px}
+
+.flugraum .biene.kreisel>span{animation:kreisel .75s cubic-bezier(.3,0,.3,1)}
+@keyframes kreisel{0%{transform:none}50%{transform:translateY(-10px) rotate(-200deg) scale(1.25)}100%{transform:rotate(-360deg)}}
+@media(max-width:800px){.sprechblase{bottom:calc(100% + 126px)}}

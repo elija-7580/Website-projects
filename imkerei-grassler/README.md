@@ -35,6 +35,10 @@ Größenauswahl wird ins Formular übernommen. Das Formular prüft Pflichtfelder
 6. Alle Angaben in `website/release-config.json` bestätigen und `python dokumentation/freigabepruefung.py` ausführen.
 7. Erst nach ausdrücklicher Freigabe veröffentlichen; dann `noindex,nofollow` und `robots.txt` bewusst anpassen.
 
+## Fassung 04 (Lebendigkeit)
+
+Hellere Grundfläche mit warmem Lichtverlauf, Bienenwachs nur noch in getönten Abschnitten mit leichtem Wabenmuster. Fliegende Bienen in Hero und Seitenköpfen, wiegende Blüten am Hero-Bild, Honigtropfen an der Goldlinie, Einblenden beim Scrollen, Hover-Bewegungen. Auf der Startseite klettert ein eigener, frei gezeichneter Bär über den Gastronomie-Streifen und nascht aus dem Honigtopf („Nur zum Kosten …“). Alles reines CSS/SVG ohne Bibliotheken; bei „Bewegung reduzieren“ stehen Bienen, Tropfen und Bär still.
+
 ## Gestaltung & Technik
 
 Drei Markenfarben nach dem Prinzip eine ausgefallene, zwei fade: Honiggold #EFA51A, Bienenwachs #F6ECCB und Waldhonig #3A2410. Honiggold wird nur als Fläche verwendet, nie als Schrift auf hellem Grund. Wortmarke und Überschriften in Young Serif, Logozeile in Bricolage Grotesque (beide SIL Open Font License, aus dem Skill-Repository anthropics/skills). Die Website bindet Young Serif lokal als WOFF ein, ohne CDN; Fließtext in der Systemschrift. Keine Tracker, Cookies oder externen Bibliotheken. Helles und dunkles Farbschema, reduzierte Bewegung, sichtbare Tastaturfokusse und Mobilmenü.

@@ -12,7 +12,7 @@ function leben(){
  if(ruhig||!('IntersectionObserver' in window)){baer?.classList.add('da');return;}
  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('sichtbar');io.unobserve(e.target);}}),{rootMargin:'0px 0px -8% 0px'});
  ziele.forEach(el=>{const g=[...el.parentElement.children].filter(c=>c.matches?.('.product-teaser,.split>*,.plain-list li')).indexOf(el);el.style.setProperty('--d',(g>0?g*.12:0)+'s');el.classList.add('reveal');io.observe(el);});
- if(baer){const bo=new IntersectionObserver(es=>{if(es[0].isIntersecting){setTimeout(()=>baer.classList.add('da'),350);bo.disconnect();}},{threshold:.2});bo.observe(baer.closest('.call-strip'));}
+ if(baer){const bo=new IntersectionObserver(es=>{if(es[0].isIntersecting){setTimeout(()=>{baer.classList.add('da');baer.closest('.call-strip').classList.add('bereit');},350);bo.disconnect();}},{threshold:.2});bo.observe(baer.closest('.call-strip'));}
 }
 
 

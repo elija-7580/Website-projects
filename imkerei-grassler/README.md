@@ -37,7 +37,7 @@ Größenauswahl wird ins Formular übernommen. Das Formular prüft Pflichtfelder
 
 ## Fassung 04 (Lebendigkeit)
 
-Hellere Grundfläche mit warmem Lichtverlauf, Bienenwachs nur noch in getönten Abschnitten mit leichtem Wabenmuster. Fliegende Bienen in Hero und Seitenköpfen, wiegende Blüten am Hero-Bild, Honigtropfen an der Goldlinie, Einblenden beim Scrollen, Hover-Bewegungen. Auf der Startseite klettert ein eigener, frei gezeichneter Bär über den Gastronomie-Streifen und nascht aus dem Honigtopf („Nur zum Kosten …“). Alles reines CSS/SVG ohne Bibliotheken; bei „Bewegung reduzieren“ stehen Bienen, Tropfen und Bär still.
+Hellere Grundfläche mit warmem Lichtverlauf, Bienenwachs nur noch in getönten Abschnitten mit leichtem Wabenmuster. Fliegende Bienen in Hero und Seitenköpfen, wiegende Blüten am Hero-Bild, Honigtropfen an der Goldlinie, Einblenden beim Scrollen, Hover-Bewegungen. Auf der Startseite klettert ein eigener Bär im Markenstil (flach, nur Waldhonig, Bienenwachs und Gold, Honigglas wie im Logo) über den Gastronomie-Streifen, schaut zum Glas, rührt, schleckt die Tatze ab und kneift genüsslich die Augen zu; ein Tropfen fällt zurück ins Glas. Im Dark Mode kehren sich Fell und Akzent um („Nur zum Kosten …“). Alles reines CSS/SVG ohne Bibliotheken; bei „Bewegung reduzieren“ stehen Bienen, Tropfen und Bär still.
 
 ## Gestaltung & Technik
 

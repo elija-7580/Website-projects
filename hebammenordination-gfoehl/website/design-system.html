@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design-System – Hebammenordination Gföhl</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/logo.png">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<style>
+.ds-swatch{border-radius:var(--radius-md);overflow:hidden;background:var(--white);box-shadow:var(--shadow-1)}
+.ds-swatch div:first-child{height:88px}
+.ds-swatch div:last-child{padding:var(--space-3) var(--space-4);font-size:var(--text-sm)}
+.ds-swatch code{color:var(--color-text-meta)}
+.ds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,180px),1fr));gap:var(--space-4)}
+.ds-block{background:var(--white);border-radius:var(--radius-md);padding:var(--space-6);display:flex;flex-direction:column;gap:var(--space-4)}
+.ds-label{font-size:var(--text-xs);color:var(--color-text-meta);font-family:ui-monospace,Menlo,monospace}
+.ds-space{display:flex;align-items:center;gap:var(--space-4);font-size:var(--text-sm)}
+.ds-space span:first-child{background:var(--rose-400);height:16px;border-radius:4px}
+</style>
+</head>
+<body>
+<main>
+<section class="page-hero"><div class="container"><div class="page-hero__inner">
+<span class="eyebrow">Design-System v1.0</span>
+<h1>Hebammenordination Gföhl</h1>
+<p class="lead">Warm &amp; editorial – medizinisch fundiert, persönlich im Ton. Altrosa als Signaturfarbe, Fraunces für Überschriften, Nunito Sans für Fließtext. Alle Werte leben in <code>assets/css/tokens.css</code>, alle Bausteine in <code>assets/css/components.css</code>.</p>
+<div class="btn-row"><a class="btn btn--secondary" href="index.html">Zur Website</a></div>
+</div></div></section>
+
+<section class="section" style="padding-top:0"><div class="container stack">
+<h2>Farben</h2>
+<p class="muted">Text und Buttons immer in <strong>Altrosa tief</strong> (#8E5B63) – das helle Altrosa besteht den Kontrast auf Weiß nicht und ist nur für Linien, Ziffern und Deko gedacht.</p>
+<div class="ds-grid">
+<div class="ds-swatch"><div style="background:var(--rose-50);border-bottom:1px solid var(--line)"></div><div><strong>Puder</strong><br><code>--rose-50 #FBF6F4</code><br>Seitenhintergrund</div></div>
+<div class="ds-swatch"><div style="background:var(--rose-100)"></div><div><strong>Blush</strong><br><code>--rose-100 #F2E4E3</code><br>Flächen, Bänder</div></div>
+<div class="ds-swatch"><div style="background:var(--rose-200)"></div><div><strong>Akzentfläche</strong><br><code>--rose-200 #E9D3D3</code><br>Bild-Schatten</div></div>
+<div class="ds-swatch"><div style="background:var(--rose-400)"></div><div><strong>Altrosa</strong><br><code>--rose-400 #C29B9E</code><br>Linien, Ziffern, Deko</div></div>
+<div class="ds-swatch"><div style="background:var(--rose-600)"></div><div><strong>Altrosa tief</strong><br><code>--rose-600 #8E5B63</code><br>Akzenttext, Buttons · 5.6:1</div></div>
+<div class="ds-swatch"><div style="background:var(--rose-700)"></div><div><strong>Hover</strong><br><code>--rose-700 #6F4149</code></div></div>
+<div class="ds-swatch"><div style="background:var(--plum-900)"></div><div><strong>Aubergine</strong><br><code>--plum-900 #3A2A30</code><br>Text, dunkle Sektionen</div></div>
+<div class="ds-swatch"><div style="background:var(--plum-700)"></div><div><strong>Text gedämpft</strong><br><code>--plum-700 #5A4950</code></div></div>
+</div>
+
+<h2 class="mt-7">Typografie</h2>
+<div class="ds-block">
+<span class="ds-label">H1 · Fraunces 400 · 40→64px · --text-3xl</span><h1>Neues Leben <em class="accent">ins Leben</em></h1>
+<span class="ds-label">H2 · Fraunces 400 · 32→44px · --text-2xl</span><h2>Ein Stück des Weges gemeinsam gehen</h2>
+<span class="ds-label">H3 · Fraunces 500 · 26px · --text-xl</span><h3>Schwangerenvorsorge</h3>
+<span class="ds-label">Eyebrow · Nunito Sans 700 · 13px · 0.2em</span><span class="eyebrow">Rundumbetreuung</span>
+<span class="ds-label">Lead · Nunito Sans 400 · 19px</span><p class="lead">Fachlich fundiert, ganzheitlich und mit viel Zeit.</p>
+<span class="ds-label">Body · Nunito Sans 400 · 17px / 1.65</span><p>In der Sprechstunde nehmen wir uns Zeit, auf deine Fragen rund um Schwangerschaft, Geburt und Wochenbett genau einzugehen.</p>
+</div>
+
+<h2 class="mt-7">Abstände &amp; Radien</h2>
+<div class="ds-block">
+<div class="ds-space"><span style="width:8px"></span>--space-2 · 8</div>
+<div class="ds-space"><span style="width:16px"></span>--space-4 · 16</div>
+<div class="ds-space"><span style="width:24px"></span>--space-5 · 24</div>
+<div class="ds-space"><span style="width:32px"></span>--space-6 · 32</div>
+<div class="ds-space"><span style="width:48px"></span>--space-7 · 48</div>
+<div class="ds-space"><span style="width:64px"></span>--space-8 · 64</div>
+<div class="ds-space"><span style="width:104px"></span>--space-9 · 64→104 (Sektionen)</div>
+<div class="btn-row mt-4">
+<div style="width:72px;height:72px;background:var(--rose-100);border-radius:var(--radius-sm)"></div>
+<div style="width:72px;height:72px;background:var(--rose-100);border-radius:var(--radius-md)"></div>
+<div style="width:72px;height:72px;background:var(--rose-100);border-radius:var(--radius-lg)"></div>
+<div style="width:72px;height:90px;background:var(--rose-100);border-radius:var(--radius-arch)"></div>
+<span class="ds-label">sm 10 · md 20 · lg 28 · arch (Signatur-Bogen)</span>
+</div>
+</div>
+
+<h2 class="mt-7">Buttons</h2>
+<div class="ds-block">
+<div class="btn-row"><a class="btn btn--primary" href="#">Primär</a><a class="btn btn--secondary" href="#">Sekundär</a><a class="btn btn--ghost" href="#">Ghost</a><a class="link-arrow" href="#">Textlink</a></div>
+<div style="background:var(--rose-600);padding:var(--space-5);border-radius:var(--radius-md)" class="btn-row"><a class="btn btn--light" href="#">Hell (auf Farbe)</a></div>
+<p class="ds-label">Mindesthöhe 44px · Hover dunkelt ab (--rose-700) · Fokus: 2px Outline in Altrosa tief</p>
+</div>
+
+<h2 class="mt-7">Badges &amp; Chips</h2>
+<div class="ds-block"><span class="badge">Kostenlos · 18.–22. SSW</span><ul class="chip-list" style="background:var(--rose-100);padding:var(--space-4);border-radius:var(--radius-md)"><li class="chip">APM nach Penzel</li><li class="chip">HARA</li></ul></div>
+
+<h2 class="mt-7">Checkliste &amp; Infobox</h2>
+<div class="split" style="align-items:flex-start">
+<ul class="checklist"><li>Kontrolle von Gewicht, Harn und Blutdruck</li><li>Kontrolle der Herztöne und der Lage des Kindes</li></ul>
+<div class="infobox"><span class="badge">ab 31./32. SSW</span><h3>Infobox</h3><p class="muted">Seitenleiste der Leistungsseiten: Kerninfo, Telefon-Button.</p></div>
+</div>
+
+<h2 class="mt-7">Phasen-Schritt</h2>
+<div class="grid-3"><div class="step"><span class="step__num">I</span><h3>Schwangerschaft</h3><p class="muted">Römische Ziffer, Linie in Altrosa.</p></div><div class="step"><span class="step__num">II</span><h3>Geburt</h3><p class="muted">Immer in Dreier- oder Vierergruppen.</p></div></div>
+
+<h2 class="mt-7">Leistungs-Index (auf Aubergine)</h2>
+<div class="section--inverse" style="padding:var(--space-6);border-radius:var(--radius-lg)">
+<ul class="index-list"><li><a class="index-row" href="#"><span class="index-row__num">01</span><h3>APM nach Penzel</h3><p>Kurzbeschreibung in einem Satz.</p></a></li></ul>
+</div>
+
+<h2 class="mt-7">Zitat</h2>
+<figure class="quote"><blockquote>Mit jedem neugeborenen Kind werden auch eine Mutter und ein Vater geboren.</blockquote><figcaption>Elisabeth Schwarz-Blamauer</figcaption></figure>
+
+<h2 class="mt-7">CTA-Band</h2>
+<div class="cta-band"><div class="stack stack--sm"><h2>Ich freue mich auf ein persönliches Kennenlernen.</h2><p>Termine nach telefonischer Vereinbarung.</p></div><a class="btn btn--light" href="#">0676 / 743 08 39</a></div>
+
+<h2 class="mt-7">Prinzipien</h2>
+<ul class="checklist">
+<li><strong>Du-Form, warm, fachlich korrekt.</strong> Medizinische Begriffe (SSW, Beckenendlage) bleiben, werden aber im Satz erklärt.</li>
+<li><strong>Eine Akzentfarbe.</strong> Altrosa trägt die Marke; Aubergine schafft Ruhe und Kontrast.</li>
+<li><strong>Serif für Gefühl, Sans für Information.</strong> Fraunces nur für Überschriften, Zitate und Ziffern.</li>
+<li><strong>Bogen als Signatur.</strong> Der Bogen-Bildrahmen (--radius-arch) nur für Porträts.</li>
+<li><strong>Barrierearm.</strong> Kontrast ≥ 4.5:1, Klickflächen ≥ 44px, sichtbarer Fokus, reduzierte Bewegung respektiert.</li>
+<li><strong>Datenschutz.</strong> Keine externen Fonts, Skripte oder Tracker.</li>
+</ul>
+</div></section>
+</main>
+</body>
+</html>

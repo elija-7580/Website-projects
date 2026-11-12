@@ -1,0 +1,121 @@
+/* =========================================================
+   Hebammenordination Gföhl – Design Tokens  (v1.0)
+   Alle Werte der Website kommen von hier. Keine Hex-Werte
+   oder freien Abstände in Komponenten verwenden.
+   ========================================================= */
+
+/* ---------- Schriften (selbst gehostet, DSGVO-konform) ---------- */
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-latin-wght-normal.woff2") format("woff2");
+  font-weight: 300 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-latin-wght-italic.woff2") format("woff2");
+  font-weight: 300 700; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Nunito Sans";
+  src: url("../fonts/nunito-sans-latin-400-normal.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Nunito Sans";
+  src: url("../fonts/nunito-sans-latin-600-normal.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Nunito Sans";
+  src: url("../fonts/nunito-sans-latin-700-normal.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* ---------- Farben: Marke ---------- */
+  --rose-50:  #FBF6F4;   /* Puder – Seitenhintergrund */
+  --rose-100: #F2E4E3;   /* Blush – Flächen, Bänder */
+  --rose-200: #E9D3D3;   /* Akzentfläche, Bild-Schatten */
+  --rose-300: #D3A9AD;   /* Altrosa hell – nur auf Dunkel / Deko */
+  --rose-400: #C29B9E;   /* Altrosa – Linien, Ziffern, Deko */
+  --rose-600: #8E5B63;   /* Altrosa tief – Text-Akzent, Buttons (5.6:1 auf Weiß) */
+  --rose-700: #6F4149;   /* Hover / Pressed */
+  --plum-900: #3A2A30;   /* Aubergine – Text, dunkle Sektionen */
+  --plum-700: #5A4950;   /* Fließtext gedämpft (8.3:1 auf Puder) */
+  --plum-500: #6E5B62;   /* Metatext (5.9:1 auf Puder) */
+  --plum-line: #5B4750;  /* Trennlinie auf Aubergine */
+  --white:    #FFFFFF;
+  --line:     #EADADA;   /* Trennlinie auf Hell */
+
+  /* ---------- Farben: Semantik ---------- */
+  --color-bg:          var(--rose-50);
+  --color-surface:     var(--white);
+  --color-surface-alt: var(--rose-100);
+  --color-text:        var(--plum-900);
+  --color-text-muted:  var(--plum-700);
+  --color-text-meta:   var(--plum-500);
+  --color-accent:      var(--rose-600);
+  --color-accent-hover:var(--rose-700);
+  --color-decor:       var(--rose-400);
+  --color-inverse-bg:  var(--plum-900);
+  --color-inverse-text:#F7EDEC;
+  --color-inverse-muted:#D9C6C7;
+  --color-focus:       var(--rose-600);
+
+  /* ---------- Typografie ---------- */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --text-xs:   0.8125rem;  /* 13 – Eyebrow, Badge */
+  --text-sm:   0.9375rem;  /* 15 – Meta, Nav */
+  --text-base: 1.0625rem;  /* 17 – Fließtext */
+  --text-lg:   1.1875rem;  /* 19 – Lead */
+  --text-xl:   1.625rem;   /* 26 – H3 */
+  --text-2xl:  clamp(2rem, 1.4rem + 2vw, 2.75rem);    /* H2 32→44 */
+  --text-3xl:  clamp(2.5rem, 1.6rem + 3.4vw, 4rem);   /* H1 40→64 */
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-body: 1.65;
+  --tracking-eyebrow: 0.2em;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* ---------- Abstände (4er-Raster) ---------- */
+  --space-1: 0.25rem;  /* 4 */
+  --space-2: 0.5rem;   /* 8 */
+  --space-3: 0.75rem;  /* 12 */
+  --space-4: 1rem;     /* 16 */
+  --space-5: 1.5rem;   /* 24 */
+  --space-6: 2rem;     /* 32 */
+  --space-7: 3rem;     /* 48 */
+  --space-8: 4rem;     /* 64 */
+  --space-9: clamp(4rem, 3rem + 4vw, 6.5rem); /* Sektion 64→104 */
+
+  --container: 1240px;
+  --container-narrow: 780px;
+  --gutter: clamp(1.25rem, 0.8rem + 2vw, 2rem);
+
+  /* ---------- Radien ---------- */
+  --radius-sm: 10px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+  --radius-arch: 999px 999px var(--radius-md) var(--radius-md);
+
+  /* ---------- Schatten ---------- */
+  --shadow-1: 0 1px 0 var(--line);
+  --shadow-2: 0 10px 30px rgba(58, 42, 48, 0.08);
+
+  /* ---------- Bewegung ---------- */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* ---------- Bedienbarkeit ---------- */
+  --tap-min: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-fast: 0ms; --duration-base: 0ms; }
+}

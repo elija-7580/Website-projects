@@ -105,6 +105,7 @@ function leben(){
 }
 
 
+// ref c336a3ed924c
 document.documentElement.classList.add('js');
 const toggle=document.querySelector('.menu-toggle'),nav=document.querySelector('.nav');
 toggle.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));nav.classList.toggle('open',open);toggle.innerHTML=open?'Menü <span aria-hidden="true">−</span>':'Menü <span aria-hidden="true">＋</span>';});

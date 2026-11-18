@@ -321,6 +321,7 @@ def page(fname, title, desc, current, body):
     with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
         f.write(html)
 
+# ref 0675f8d958a2
 def crumbs(items):
     lis = "".join(f'<li><a href="{h}">{t}</a></li>' if h else f'<li aria-current="page">{t}</li>' for t, h in items)
     return f'<nav class="breadcrumb" aria-label="Brotkrumen"><ol>{lis}</ol></nav>'

@@ -1,36 +1,38 @@
-# Offene Punkte · Fassung 05
+# Offene Punkte · Fassung 09
 
-Auf der Website ist alles, was noch fehlt, **gestrichelt mit dem Etikett „Platzhalter“** oder **gelb hinterlegt mit „fehlt:“** markiert. Die Vorschauleiste oben zählt die Platzhalter je Seite. Diese Liste fasst sie zusammen.
+Seit Fassung 09 sind Thiemos Angaben eingetragen: Betreiber (Thiemo und Christoph Grassler), Adresse Am Mühlkamp 30, 3492 Walkersdorf am Kamp, E-Mail, beide Telefonnummern (auch WhatsApp), Wunschdomain imkerei-grassler.at, drei Bienenstände mit Völkern und Sorten, Abholung rund um die Uhr in Wolfshof (Schönberg ab Frühjahr), alle Preise, Waben, sechs Mischhonige, Ausblick Oxymel und Propolis, Partnerschaftspakete mit Bedingungen, Gastro-Konditionen und Versandkosten.
 
-## Von Thiemo zu klären
+Was noch fehlt, ist auf der Website weiterhin gestrichelt als „Platzhalter“ bzw. gelb mit „fehlt:“ markiert. Abhakliste für Thiemo: `website/fuer-thiemo.html`.
 
-### Standorte & Abholung (Seite `standorte.html`)
-Geklärt: Beide Bienenstände sind zugleich Abholorte und werden auf der Karte genau gezeigt. Wolfshof 24, 3571 Wolfshof (seit ca. Oktober 2026) und der kommende Stand bei Schönberg am Kamp (48°31'03.7"N 15°41'43.9"E), jeweils mit Thiemos Google-Maps-Link.
-- [ ] Abholzeiten für beide Orte.
-- [ ] Zweiter Standort: Startdatum und Adresse oder Ortsbezeichnung.
-- [ ] Je Standort: Foto, Anzahl Völker, was in der Umgebung blüht.
-- [ ] Weitere Verkaufsstellen (Hofläden, Geschäfte, Bauernmärkte), falls es welche gibt.
-- [ ] Regionsangabe abstimmen: Die Website sagt teils „Krems & Umgebung“, die Standorte liegen im Kamptal. Vorschlag: „Krems & Kamptal“.
+## Bitte bestätigen
+- [ ] Wolfshof: neue Angabe „Wolfshof 5“, vorher „Wolfshof 24“. Der Google-Maps-Link ist noch der alte.
+- [ ] Cremehonig fehlt in Thiemos Liste und wurde entfernt.
+- [ ] Gleicher Preis für Blüten-, Akazien- und Waldhonig (so umgesetzt).
+- [ ] Schreibweise „Waldviertler Mohn“ (Thiemo schrieb „Wald4-tler Mohn“, evtl. Marke).
 
-### Versand per Post (Seite `honig.html#versand`)
-- [ ] Versandgebiet, Versandkosten, Versanddienst, Verpackung/Bruchschutz, Lieferzeit, Bezahlart.
-- [ ] Werden Honigwaben verschickt?
-- [ ] Rechtlich prüfen lassen, was bei Bestellungen aus der Ferne nötig ist (u. a. Widerrufsbelehrung, AGB, Preisangaben inkl. Versand, Impressum/Datenschutz anpassen).
+## Standorte & Abholung
+- [ ] Ablauf der Abholung rund um die Uhr in Wolfshof (Selbstbedienung, Bezahlung).
+- [ ] Schönberg am Kamp: genaue Adresse und Startdatum (Karte nutzt die bisherigen Koordinaten).
+- [ ] Walkersdorf am Kamp ist auf der Illustration nur ungefähr eingezeichnet.
+- [ ] Fotos der Stände und Abholstellen.
 
-### Neue Sorten (Himbeere, Heidelbeere, Zimt, Ingwer-Orange)
-- [ ] Grundhonig je Sorte, Anteil der Zutat in %.
-- [ ] Etiketten: Laut AGES dürfen solche Produkte in Österreich als „Honig mit Zutaten“ (z. B. „Waldhonig mit Zimt“) verkauft werden, brauchen aber Zutatenverzeichnis, Allergen- und Nährwertkennzeichnung und bei genannter Zutat die Mengenangabe. Vor dem Verkauf bei Lebensmittelaufsicht oder Imkerverband absichern.
-- [ ] Endgültige Sortennamen, Glasgrößen, Preise, Starttermin.
+## Mischhonige
+- [ ] Grundhonig je Sorte.
+- [ ] Etiketten als „Honig mit Zutaten“ (Zutatenverzeichnis, Allergene, Nährwerte, Mengenangabe der Zutat).
+- [ ] „Bio“ im Produktnamen: Nach EU-Bio-Recht darf ein nicht biozertifiziertes Produkt Bio-Zutaten in der Regel nur im Zutatenverzeichnis nennen. Vor dem Druck bei Kontrollstelle oder Lebensmittelaufsicht klären.
 
-### Bienenstock-Partnerschaft (Seite `partnerschaft.html`)
-- [ ] Pakete bestätigen oder ändern (Vorschlag: Kennenlernen, Ganzes Volk, Für Betriebe).
-- [ ] Je Paket: Inhalte, Preis pro Jahr, Anzahl Gläser.
-- [ ] Laufzeit und Verlängerung, Besuchsregeln, was passiert, wenn ein Volk eingeht, Gutschein-Variante.
+## Versand & Zahlung
+- [ ] Versanddienst und Lieferzeit.
+- [ ] Mollie einrichten; Zahlungslink pro Bestellung oder Shop entscheiden. Die Website hat keinen Checkout.
+- [ ] Fernabsatz: Widerrufsbelehrung, AGB, Preisangaben inkl. Versand rechtlich prüfen lassen.
 
-### Fotos
-- [ ] Produktfotos aller sieben Sorten, Fotos der Bienenstände, Porträt von Thiemo. Anleitung: `Fotoanleitung.md`.
-- [ ] Preise der bestehenden Sorten (Wald, Creme, Waben).
-- [ ] Telefon und E-Mail für die Kontaktseite.
+## Gastronomie & Partnerschaft
+- [ ] Muster, Rechnung/Zahlungsziel, Portionsgläser.
+- [ ] Logo für Speisekarten (Thiemo: „Logo gibt es noch nicht“).
+- [ ] Besuche am Bienenstand für Partner?
 
-## Weiterhin offen aus früheren Fassungen
-Siehe `website/release-config.json` und `website/freigabe.html`.
+## Rechtliches & Start
+- [ ] Impressum prüfen: Rechtsform, Betreiber, UID, Blattlinie.
+- [ ] Datenschutzerklärung für E-Mail, WhatsApp, Mollie und Hosting.
+- [ ] Domain registrieren, Hosting festlegen, Anfrageweg testen.
+- [ ] Ausdrückliche Freigabe zur Veröffentlichung.

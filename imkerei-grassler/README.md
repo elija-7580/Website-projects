@@ -12,7 +12,7 @@ Das Repository enthält nur Textdateien. Die beiden Symbolfotos liegen deshalb a
 
 ## Status
 
-Gestaltung und Frontend sind ausgearbeitet. Nicht veröffentlicht, nicht für den Livebetrieb freigegeben. Keine Zugangsdaten und keine privaten Kontaktdaten eingebaut. Kein Onlineshop, kein Zahlungsverkehr, kein E-Mail-Versand.
+Gestaltung und Frontend sind ausgearbeitet. Nicht veröffentlicht, nicht für den Livebetrieb freigegeben. Keine Zugangsdaten eingebaut. Betriebliche Kontaktdaten seit Fassung 09 auf Thiemos Wunsch eingetragen. Kein Onlineshop, kein Zahlungsverkehr, kein E-Mail-Versand.
 
 ### Anfragefunktion
 
@@ -64,3 +64,7 @@ Gestaltet nach den Skills `canvas-design` (Designphilosophie „Goldene Geduld�
 ## Quellen und Erhaltung
 
 Fassung 03 ersetzt Ultramarin, Haferpapier und Graphit durch die Honigpalette und zeichnet das Honigglas-G mit Tropfen neu. Texte bleiben aus Fassung 02. Frühere Fassungen bleiben in Notion erhalten.
+
+## Fassung 09 (echte Angaben von Thiemo)
+
+Thiemos Angaben eingetragen: Betreiber Thiemo und Christoph Grassler, Adresse Walkersdorf am Kamp, E-Mail, zwei Nummern mit WhatsApp, Wunschdomain imkerei-grassler.at. Sortiment neu: Blüten-, Akazien- und Waldhonig je 250 g/500 g/1 kg um 5/8/15 €, Honigwaben (klein 250 g, groß bis 2,5 kg), Honig mit Wabenstücken, sechs Mischhonige (250 g, 8 €, ab Anfang Jänner) mit zwei neuen Icons (Mohn, Haselnuss), Ausblick Oxymel und Propolis; Cremehonig entfernt. Preise stehen direkt an der Größenauswahl. Karte mit drei Bienenständen (Bienenstock-Markierung) und zwei Abholstellen rund um die Uhr (Glas-Markierung). Partnerschaft mit echten Paketen, Preisen und Bedingungen. Gastronomie mit Großgebinden, Staffelpreisen und Herkunftssatz „100 % regionaler Honig aus dem Kamptal“. Versandkosten auf der Honigseite. Das Anfrageformular öffnet den fertigen Text jetzt per Klick in E-Mail oder WhatsApp; die Website selbst verschickt weiterhin nichts. Impressum mit Betreiberangaben (noch zu prüfen). Offene Punkte: `dokumentation/Offene-Punkte.md` und `website/fuer-thiemo.html`.

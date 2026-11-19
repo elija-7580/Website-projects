@@ -5,7 +5,7 @@ Seit Fassung 09 sind Thiemos Angaben eingetragen: Betreiber (Thiemo und Christop
 Was noch fehlt, ist auf der Website weiterhin gestrichelt als „Platzhalter“ bzw. gelb mit „fehlt:“ markiert. Abhakliste für Thiemo: `website/fuer-thiemo.html`.
 
 ## Bitte bestätigen
-- [ ] Wolfshof: neue Angabe „Wolfshof 5“, vorher „Wolfshof 24“. Der Google-Maps-Link ist noch der alte.
+- [x] Wolfshof: Adresse ist Wolfshof 5 (bestätigt). Karten-Link sucht jetzt nach dieser Adresse.
 - [ ] Cremehonig fehlt in Thiemos Liste und wurde entfernt.
 - [ ] Gleicher Preis für Blüten-, Akazien- und Waldhonig (so umgesetzt).
 - [ ] Schreibweise „Waldviertler Mohn“ (Thiemo schrieb „Wald4-tler Mohn“, evtl. Marke).

@@ -1,6 +1,6 @@
 # Hebammenordination Gföhl – Website
 
-Neue Website für Elisabeth Schwarz-Blamauer, Hebamme in Gföhl (bisher www.insLeben.at). Richtung „Warm & editorial“ (Entwurf B): Altrosa, Puder, Aubergine, Fraunces + Nunito Sans.
+Neue Website für Elisabeth Schwarz-Blamauer, Hebamme in Gföhl (bisher www.insLeben.at). Richtung „Warm & editorial“ (Entwurf B), seit v2.0 im Look ihres Kursfolders: Flyer-Rosa, Rosenholz, warmes Braun, Handschrift (Allison) + Urbanist.
 
 | Was | Wo |
 | --- | --- |

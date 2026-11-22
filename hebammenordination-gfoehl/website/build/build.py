@@ -98,7 +98,7 @@ S = [
 </ul>
 <p>Neues Leben ins Leben zu begleiten ist der kraftvollste und tiefgreifendste Prozess im Leben eines Menschen. Es ist mir eine große Freude, euch als werdende Eltern liebevoll zu unterstützen und die Bindung und Kommunikation mit eurem Kind umsichtig zu stärken. Mit jedem neugeborenen Kind werden auch eine Mutter und ein Vater geboren.</p>
 <figure class="infobox infobox--alt">
-<blockquote style="margin:0;font-family:var(--font-display);font-size:1.2rem;line-height:1.5;color:var(--color-text)">„… in der Form, wie eine Gesellschaft ein Neugeborenes empfängt, zeigt sie ihre tiefen Ressourcen und ihr Wissen vom Leben.“</blockquote>
+<blockquote style="margin:0;font-family:var(--font-display);font-style:italic;font-size:1.2rem;line-height:1.5;color:var(--color-text)">„… in der Form, wie eine Gesellschaft ein Neugeborenes empfängt, zeigt sie ihre tiefen Ressourcen und ihr Wissen vom Leben.“</blockquote>
 <figcaption class="eyebrow">Jacques Gélis</figcaption>
 </figure>
 """,
@@ -303,9 +303,10 @@ def page(fname, title, desc, current, body):
 <meta name="robots" content="noindex,nofollow">
 <title>{full_title}</title>
 <meta name="description" content="{desc}">
-<meta name="theme-color" content="#FBF6F4">
+<meta name="theme-color" content="#F6E4E5">
 <link rel="icon" href="assets/img/logo.png">
-<link rel="preload" href="assets/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/allison-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/urbanist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/components.css">
 </head>
@@ -329,8 +330,8 @@ def crumbs(items):
 def page_hero(eyebrow, title, lead, crumb_items):
     return f'''<section class="page-hero"><div class="container"><div class="page-hero__inner">
 {crumbs(crumb_items)}
-<span class="eyebrow">{eyebrow}</span>
 <h1>{title}</h1>
+<span class="eyebrow">{eyebrow}</span>
 <p class="lead">{lead}</p>
 </div></div></section>'''
 
@@ -347,8 +348,8 @@ def build_index():
     body = f'''
 <section class="hero"><div class="container split">
 <div class="stack" style="flex:1.15 1 460px">
-<span class="eyebrow">Hebammenordination Gföhl</span>
-<h1>Neues Leben <em>ins Leben</em> begleiten.</h1>
+<h1>Neues Leben <em>ins Leben</em> begleiten</h1>
+<span class="eyebrow eyebrow--sub">Hebammenordination Gföhl</span>
 <p class="lead">Herzlich willkommen! Fachlich fundiert, ganzheitlich und mit viel Zeit begleite ich dich durch Schwangerschaft, Geburt und Wochenbett – in deinem Tempo und nach deinen Vorstellungen.</p>
 <div class="btn-row"><a class="btn btn--primary" href="kontakt.html">Kennenlernen vereinbaren</a><a class="btn btn--ghost" href="{TEL_HREF}">{TEL}</a></div>
 </div>

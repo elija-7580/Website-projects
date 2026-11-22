@@ -1,5 +1,5 @@
 /* =========================================================
-   Hebammenordination Gföhl – Komponenten  (v1.0)
+   Hebammenordination Gföhl – Komponenten  (v2.0 – Flyer-Look)
    Nutzt ausschließlich Tokens aus tokens.css.
    ========================================================= */
 
@@ -19,10 +19,18 @@ img { max-width: 100%; display: block; }
 a { color: var(--color-accent); text-underline-offset: 3px; transition: color var(--duration-fast) var(--ease); }
 a:hover { color: var(--color-accent-hover); }
 :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; border-radius: 4px; }
-h1, h2, h3, h4 { font-family: var(--font-display); font-weight: var(--weight-regular); line-height: var(--leading-tight); margin: 0; letter-spacing: -0.01em; }
-h1 { font-size: var(--text-3xl); }
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: var(--weight-semibold); line-height: var(--leading-tight); margin: 0; letter-spacing: -0.01em; }
+/* H1 = Handschrift auf weißem Pinselstrich, wie der Flyer-Titel */
+h1 {
+  font-family: var(--font-script); font-weight: var(--weight-regular); font-size: var(--text-script);
+  line-height: 1; letter-spacing: 0; color: var(--rose-script);
+  align-self: flex-start; position: relative; z-index: 1;
+  padding: 0.12em 0.45em 0.2em 0.3em; margin-left: -0.3em;
+  background: url("../img/deko/pinselstrich.svg") center / 100% 100% no-repeat;
+}
+h1 em { font-style: normal; color: inherit; }
 h2 { font-size: var(--text-2xl); }
-h3 { font-size: var(--text-xl); font-weight: var(--weight-medium); line-height: var(--leading-snug); }
+h3 { font-size: var(--text-xl); line-height: var(--leading-snug); }
 p { margin: 0; }
 em.accent, .accent { color: var(--color-accent); }
 
@@ -50,7 +58,7 @@ em.accent, .accent { color: var(--color-accent); }
 .muted { color: var(--color-text-muted); }
 
 /* ---------- Eyebrow ---------- */
-.eyebrow { font-size: var(--text-xs); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; font-weight: var(--weight-bold); color: var(--color-accent); }
+.eyebrow { font-size: var(--text-sm); letter-spacing: 0.02em; font-weight: var(--weight-semibold); color: var(--color-accent); }
 .section--inverse .eyebrow { color: var(--rose-300); }
 
 /* ---------- Buttons ---------- */
@@ -83,8 +91,8 @@ em.accent, .accent { color: var(--color-accent); }
 .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-4); }
 .brand { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; color: var(--color-text); }
 .brand img { width: 26px; height: 44px; object-fit: contain; }
-.brand__name { display: block; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.15; }
-.brand__role { display: block; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-accent); font-weight: var(--weight-bold); }
+.brand__name { display: block; font-family: var(--font-script); font-size: 2.1rem; line-height: 0.95; color: var(--rose-script); }
+.brand__role { display: block; font-size: 0.8rem; letter-spacing: 0.06em; color: var(--color-text-meta); font-weight: var(--weight-semibold); }
 .nav { display: flex; align-items: center; gap: var(--space-6); }
 .nav__list { display: flex; gap: var(--space-5); list-style: none; margin: 0; padding: 0; }
 .nav__link { color: var(--color-text); text-decoration: none; font-size: var(--text-sm); font-weight: var(--weight-bold); padding-block: var(--space-2); }
@@ -119,7 +127,8 @@ em.accent, .accent { color: var(--color-accent); }
 .hero { padding-block: var(--space-6) var(--space-9); }
 .hero h1 em { color: var(--color-accent); }
 .arch { position: relative; max-width: 460px; margin-inline: auto; width: 100%; }
-.arch::before { content: ""; position: absolute; inset: 24px -24px -24px 24px; border-radius: var(--radius-arch); background: var(--rose-200); }
+.arch::before { content: ""; position: absolute; inset: 24px -24px -24px 24px; border-radius: var(--radius-arch); background: var(--rose-100); }
+.arch::after { content: ""; position: absolute; width: 150px; height: 150px; right: -60px; top: -30px; background: url("../img/deko/punkte.svg") center / contain no-repeat; pointer-events: none; }
 .arch img { position: relative; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius-arch); }
 @media (max-width: 600px) { .arch::before { inset: 14px -10px -14px 10px; } }
 
@@ -139,7 +148,7 @@ em.accent, .accent { color: var(--color-accent); }
 
 /* ---------- Phasen-Schritt ---------- */
 .step { display: flex; flex-direction: column; gap: var(--space-3); padding-top: var(--space-5); border-top: 2px solid var(--color-decor); }
-.step__num { font-family: var(--font-display); font-size: 2.5rem; line-height: 1; color: var(--color-decor); }
+.step__num { font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: 2.5rem; line-height: 1; color: var(--color-decor); }
 .step a { margin-top: auto; }
 
 /* ---------- Karte ---------- */
@@ -152,14 +161,14 @@ em.accent, .accent { color: var(--color-accent); }
 .index-row { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-7); padding: var(--space-5) 0; border-top: 1px solid var(--plum-line); text-decoration: none; color: inherit; transition: background var(--duration-base) var(--ease); }
 a.index-row:hover { color: inherit; background: rgba(255,255,255,0.03); }
 a.index-row:hover h3 { color: var(--rose-300); }
-.index-row__num { flex: 0 0 56px; font-family: var(--font-display); font-size: 1.25rem; color: var(--rose-300); }
+.index-row__num { flex: 0 0 56px; font-family: var(--font-display); font-weight: var(--weight-regular); font-style: italic; font-size: 1.25rem; color: var(--rose-300); }
 .index-row h3 { flex: 1 1 260px; transition: color var(--duration-fast) var(--ease); }
 .index-row p { flex: 2 1 420px; }
 
 /* ---------- Zitat ---------- */
 .quote { max-width: 900px; margin-inline: auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-5); }
-.quote blockquote { margin: 0; font-family: var(--font-display); font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.25rem); line-height: 1.35; }
-.quote figcaption { font-size: var(--text-sm); letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-accent); font-weight: var(--weight-bold); }
+.quote blockquote { margin: 0; font-family: var(--font-display); font-style: italic; font-weight: var(--weight-medium); color: var(--color-text-muted); font-size: clamp(1.5rem, 1.15rem + 1.5vw, 2.1rem); line-height: 1.4; }
+.quote figcaption { font-family: var(--font-script); font-size: 2.6rem; line-height: 1; color: var(--rose-script); }
 
 /* ---------- Fließtext (Unterseiten) ---------- */
 .prose { display: flex; flex-direction: column; gap: var(--space-5); color: var(--color-text-muted); }
@@ -174,8 +183,13 @@ a.index-row:hover h3 { color: var(--rose-300); }
 .checklist--2col { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
 
 /* ---------- Infobox ---------- */
-.infobox { background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); box-shadow: var(--shadow-1); }
-.infobox--alt { background: var(--color-surface-alt); box-shadow: none; }
+/* Rahmen-Box mit überstehenden Linien – wie die Termin-Box im Flyer */
+.infobox { position: relative; background: color-mix(in srgb, var(--surface-soft) 55%, transparent); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); margin: 14px; }
+.infobox::before, .infobox::after { content: ""; position: absolute; pointer-events: none; border: 0 solid var(--color-decor); }
+.infobox::before { inset: 0 -14px; border-top-width: 1.5px; border-bottom-width: 1.5px; }
+.infobox::after  { inset: -14px 0; border-left-width: 1.5px; border-right-width: 1.5px; }
+.infobox--alt { background: color-mix(in srgb, var(--white) 45%, transparent); }
+.infobox > h2, .infobox > h3 { padding-bottom: var(--space-3); border-bottom: 1.5px solid var(--color-decor); }
 .infobox h2, .infobox h3 { font-size: var(--text-xl); }
 
 /* ---------- Detail-Layout (Unterseite) ---------- */
@@ -195,7 +209,7 @@ a.index-row:hover h3 { color: var(--rose-300); }
 .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--space-6); }
 .contact-item { display: flex; flex-direction: column; gap: var(--space-1); }
 .contact-item .eyebrow { letter-spacing: 0.16em; }
-.contact-item__big { font-family: var(--font-display); font-size: 1.35rem; }
+.contact-item__big { font-family: var(--font-display); font-weight: var(--weight-semibold); font-size: 1.35rem; }
 
 /* ---------- CTA-Band ---------- */
 .cta-band { background: var(--color-accent); color: var(--white); border-radius: var(--radius-lg); padding: clamp(2rem, 1.2rem + 3vw, 3.5rem); display: flex; flex-wrap: wrap; gap: var(--space-5); justify-content: space-between; align-items: center; }
@@ -207,10 +221,61 @@ a.index-row:hover h3 { color: var(--rose-300); }
 .site-footer a { color: var(--color-inverse-text); }
 .site-footer a:hover { color: var(--rose-300); }
 .site-footer__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--space-7); padding-block: var(--space-8) var(--space-7); }
-.site-footer h2 { font-size: 1.15rem; color: var(--color-inverse-text); margin-bottom: var(--space-3); }
+.site-footer h2 { font-family: var(--font-script); font-weight: var(--weight-regular); font-size: 2.2rem; line-height: 1; color: var(--rose-300); margin-bottom: var(--space-3); }
 .site-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
 .site-footer__bottom { border-top: 1px solid var(--plum-line); padding-block: var(--space-5); display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); justify-content: space-between; }
 
 /* ---------- Hilfsklassen ---------- */
 .mt-4 { margin-top: var(--space-4); } .mt-6 { margin-top: var(--space-6); } .mt-7 { margin-top: var(--space-7); }
 .center { text-align: center; }
+
+/* =========================================================
+   Flyer-Look: Deko-Ebenen (Punkte, Blobs, Blattlinien)
+   Rein dekorativ, aria-frei über CSS.
+   ========================================================= */
+.hero, .page-hero, .section--alt, .cta-band { position: relative; overflow: hidden; isolation: isolate; }
+.hero::before, .page-hero::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  width: clamp(160px, 18vw, 260px); aspect-ratio: 1; right: 4%; top: 6%;
+  background: url("../img/deko/punkte.svg") center / contain no-repeat;
+}
+.hero::after, .page-hero::after {
+  content: ""; position: absolute; z-index: -2; pointer-events: none;
+  width: clamp(320px, 40vw, 620px); aspect-ratio: 1; left: -14%; bottom: -38%;
+  background: url("../img/deko/blob.svg") center / contain no-repeat;
+}
+.section--alt::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  width: 180px; height: 260px; right: 3%; bottom: -10px;
+  background: url("../img/deko/blatt.svg") center / contain no-repeat;
+}
+.cta-band::after {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  width: 220px; aspect-ratio: 1; right: -40px; top: -60px; opacity: 0.25;
+  background: url("../img/deko/punkte.svg") center / contain no-repeat;
+}
+
+/* Untertitel unter dem Handschrift-Titel, auf rosa Pinselstrich (wie „für Heldinnen“) */
+.page-hero__inner > .breadcrumb { order: 0; }
+.page-hero__inner > h1 { order: 1; }
+.page-hero__inner > .eyebrow { order: 2; }
+.page-hero__inner > .eyebrow, .hero .eyebrow--sub {
+  align-self: flex-start; margin: -0.9em 0 0 clamp(1.5rem, 6vw, 5rem); position: relative; z-index: 2;
+  padding: 0.25em 1em 0.35em; font-size: var(--text-lg); font-weight: var(--weight-medium); color: var(--color-accent);
+  background: url("../img/deko/pinselstrich-rosa.svg") center / 100% 100% no-repeat;
+}
+.page-hero__inner > :not(.breadcrumb):not(h1):not(.eyebrow) { order: 3; }
+
+/* Fließtext etwas zentrierter wirkend, wie der Flyer-Satz */
+.lead { color: var(--color-text-muted); }
+.prose h2 { font-weight: var(--weight-semibold); }
+.btn { font-weight: var(--weight-semibold); letter-spacing: 0.01em; }
+
+@media (max-width: 600px) {
+  h1 { padding-inline: 0.3em 0.35em; margin-left: -0.15em; }
+  .hero::before, .page-hero::before { opacity: 0.6; right: -6%; }
+}
+@media (max-width: 480px) {
+  .brand__name { font-size: 1.7rem; white-space: nowrap; }
+  .brand img { width: 20px; height: 34px; }
+}

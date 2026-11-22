@@ -20,15 +20,16 @@ a { color: var(--color-accent); text-underline-offset: 3px; transition: color va
 a:hover { color: var(--color-accent-hover); }
 :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; border-radius: 4px; }
 h1, h2, h3, h4 { font-family: var(--font-display); font-weight: var(--weight-semibold); line-height: var(--leading-tight); margin: 0; letter-spacing: -0.01em; }
-/* H1 = Handschrift auf weißem Pinselstrich, wie der Flyer-Titel */
-h1 {
+h1 { font-size: var(--text-3xl); }
+/* Handschrift auf Pinselstrich – nur als Akzent (Startseite) */
+.h1--script {
   font-family: var(--font-script); font-weight: var(--weight-regular); font-size: var(--text-script);
   line-height: 1; letter-spacing: 0; color: var(--rose-script);
-  align-self: flex-start; position: relative; z-index: 1;
-  padding: 0.12em 0.45em 0.2em 0.3em; margin-left: -0.3em;
+  align-self: flex-start; padding: 0.12em 0.45em 0.2em 0.3em; margin-left: -0.3em;
   background: url("../img/deko/pinselstrich.svg") center / 100% 100% no-repeat;
 }
-h1 em { font-style: normal; color: inherit; }
+h1 em { font-style: normal; color: var(--color-accent); }
+.h1--script em { color: inherit; }
 h2 { font-size: var(--text-2xl); }
 h3 { font-size: var(--text-xl); line-height: var(--leading-snug); }
 p { margin: 0; }
@@ -230,50 +231,16 @@ a.index-row:hover h3 { color: var(--rose-300); }
 .center { text-align: center; }
 
 /* =========================================================
-   Flyer-Look: Deko-Ebenen (Punkte, Blobs, Blattlinien)
-   Rein dekorativ, aria-frei über CSS.
+   Flyer-Look, dezent: nur Punkte neben dem Porträt (.arch::after)
+   und Handschrift-Titel auf der Startseite.
    ========================================================= */
-.hero, .page-hero, .section--alt, .cta-band { position: relative; overflow: hidden; isolation: isolate; }
-.hero::before, .page-hero::before {
-  content: ""; position: absolute; z-index: -1; pointer-events: none;
-  width: clamp(160px, 18vw, 260px); aspect-ratio: 1; right: 4%; top: 6%;
-  background: url("../img/deko/punkte.svg") center / contain no-repeat;
-}
-.hero::after, .page-hero::after {
-  content: ""; position: absolute; z-index: -2; pointer-events: none;
-  width: clamp(320px, 40vw, 620px); aspect-ratio: 1; left: -14%; bottom: -38%;
-  background: url("../img/deko/blob.svg") center / contain no-repeat;
-}
-.section--alt::before {
-  content: ""; position: absolute; z-index: -1; pointer-events: none;
-  width: 180px; height: 260px; right: 3%; bottom: -10px;
-  background: url("../img/deko/blatt.svg") center / contain no-repeat;
-}
-.cta-band::after {
-  content: ""; position: absolute; z-index: -1; pointer-events: none;
-  width: 220px; aspect-ratio: 1; right: -40px; top: -60px; opacity: 0.25;
-  background: url("../img/deko/punkte.svg") center / contain no-repeat;
-}
-
-/* Untertitel unter dem Handschrift-Titel, auf rosa Pinselstrich (wie „für Heldinnen“) */
-.page-hero__inner > .breadcrumb { order: 0; }
-.page-hero__inner > h1 { order: 1; }
-.page-hero__inner > .eyebrow { order: 2; }
-.page-hero__inner > .eyebrow, .hero .eyebrow--sub {
-  align-self: flex-start; margin: -0.9em 0 0 clamp(1.5rem, 6vw, 5rem); position: relative; z-index: 2;
-  padding: 0.25em 1em 0.35em; font-size: var(--text-lg); font-weight: var(--weight-medium); color: var(--color-accent);
-  background: url("../img/deko/pinselstrich-rosa.svg") center / 100% 100% no-repeat;
-}
-.page-hero__inner > :not(.breadcrumb):not(h1):not(.eyebrow) { order: 3; }
-
 /* Fließtext etwas zentrierter wirkend, wie der Flyer-Satz */
 .lead { color: var(--color-text-muted); }
 .prose h2 { font-weight: var(--weight-semibold); }
 .btn { font-weight: var(--weight-semibold); letter-spacing: 0.01em; }
 
 @media (max-width: 600px) {
-  h1 { padding-inline: 0.3em 0.35em; margin-left: -0.15em; }
-  .hero::before, .page-hero::before { opacity: 0.6; right: -6%; }
+  .h1--script { padding-inline: 0.3em 0.35em; margin-left: -0.15em; }
 }
 @media (max-width: 480px) {
   .brand__name { font-size: 1.7rem; white-space: nowrap; }

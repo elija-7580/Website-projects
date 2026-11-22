@@ -45,10 +45,11 @@ Live-Styleguide: `design-system.html`. Quelle der Wahrheit: `assets/css/tokens.c
 - Neue Farbe/Größe: zuerst als Token anlegen, dann verwenden.
 - Bilder: `assets/img/`, Alt-Text immer beschreibend. Die Bestandsfotos sind niedrig aufgelöst (ca. 300 px) – für den Livegang neue Fotos in mind. 1600 px Breite empfohlen.
 
-## Flyer-Look (v2.0)
+## Flyer-Look (v2.1, dezent)
 
-Abgeleitet aus Elisabeths Kursfolder „Geburtsvorbereitung für Heldinnen“ (Farben direkt aus dem Flyer gemessen).
+Abgeleitet aus Elisabeths Kursfolder „Geburtsvorbereitung für Heldinnen“ (Farben direkt aus dem Flyer gemessen), bewusst sparsam eingesetzt:
 
-- **Seitentitel:** Handschrift `--font-script` in `--rose-script` auf weißem Pinselstrich, darunter der Untertitel auf rosa Pinselstrich.
-- **Rahmen-Box:** `.infobox` hat überstehende Linien in `--rose-400`, wie die Termin-Box im Flyer.
-- **Deko** (`assets/img/deko/`): `punkte.svg`, `blob.svg`, `blatt.svg`, `pinselstrich(-rosa).svg`. Nur über CSS-Pseudo-Elemente, nie als Inhalt.
+- **Farben & Schrift** aus dem Flyer: Flyer-Rosa, Rosenholz, warmes Braun, Urbanist.
+- **Handschrift** (`--font-script`) nur für den Startseiten-Titel (`.h1--script` auf weißem Pinselstrich), den Logo-Schriftzug und Signaturen.
+- **Rahmen-Box:** `.infobox` mit überstehenden Linien wie die Termin-Box im Flyer.
+- **Deko:** nur die Punkte neben dem Porträt (`.arch::after`). `blob.svg`, `blatt.svg` und `pinselstrich-rosa.svg` liegen als Reserve in `assets/img/deko/`.

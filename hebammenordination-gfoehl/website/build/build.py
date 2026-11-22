@@ -330,8 +330,8 @@ def crumbs(items):
 def page_hero(eyebrow, title, lead, crumb_items):
     return f'''<section class="page-hero"><div class="container"><div class="page-hero__inner">
 {crumbs(crumb_items)}
-<h1>{title}</h1>
 <span class="eyebrow">{eyebrow}</span>
+<h1>{title}</h1>
 <p class="lead">{lead}</p>
 </div></div></section>'''
 
@@ -348,8 +348,8 @@ def build_index():
     body = f'''
 <section class="hero"><div class="container split">
 <div class="stack" style="flex:1.15 1 460px">
-<h1>Neues Leben <em>ins Leben</em> begleiten</h1>
-<span class="eyebrow eyebrow--sub">Hebammenordination Gföhl</span>
+<span class="eyebrow">Hebammenordination Gföhl</span>
+<h1 class="h1--script">Neues Leben <em>ins Leben</em> begleiten</h1>
 <p class="lead">Herzlich willkommen! Fachlich fundiert, ganzheitlich und mit viel Zeit begleite ich dich durch Schwangerschaft, Geburt und Wochenbett – in deinem Tempo und nach deinen Vorstellungen.</p>
 <div class="btn-row"><a class="btn btn--primary" href="kontakt.html">Kennenlernen vereinbaren</a><a class="btn btn--ghost" href="{TEL_HREF}">{TEL}</a></div>
 </div>

@@ -72,3 +72,7 @@ Thiemos Angaben eingetragen: Betreiber Thiemo und Christoph Grassler, Adresse Wa
 ## Fassung 10 (Selbstbedienung Wolfshof)
 
 Neue Seite `wolfshof.html`: Kundinnen und Kunden zählen an der Hütte per Handy zusammen, was sie mitnehmen, und zahlen über einen Mollie-Zahllink mit offenem Betrag (Link fehlt noch, Feld `data-zahllink`). `wolfshof-schild.html` ist ein A5-Schild mit QR-Code auf diese Seite. Thiemos Kartengerät ist ebenfalls von Mollie.
+
+## Fassung 11 (Server, Mollie, Verwaltung)
+
+Neuer Ordner `server/`: Cloudflare Worker mit D1. Er liefert die Website aus, legt Mollie-Zahlungen mit Preisen aus der Datenbank an (Hütte und Versand), wertet den Webhook aus, zieht das Lager ab und schickt Beträge ans Mollie-Kartengerät. Verwaltung unter `/verwaltung` mit Passkey-Login. Neue Seiten: `bestellen.html` (Versand), `danke.html` (Zahlungsstatus); `wolfshof.html` nutzt den Server, ohne Server fällt sie auf den Mollie-Zahllink zurück. Einrichtung: `server/README.md`.

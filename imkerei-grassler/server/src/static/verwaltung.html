@@ -1,0 +1,104 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: LicenseRef-AllRightsReserved -->
+<!-- SPDX-FileCopyrightText: 2026 Elija Samuel Friedrich-Ulrich -->
+<html lang="de-AT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light">
+<title>Verwaltung | Imkerei Grassler</title><link rel="icon" href="/assets/favicon.svg"><link rel="stylesheet" href="/assets/site.css">
+<style>
+body{background:#f6eccb}
+.vw{max-width:980px;margin:0 auto;padding:20px 18px 80px}
+.vw-kopf{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:6px 0 18px;border-bottom:1px solid var(--line)}
+.vw-kopf img{width:150px;height:auto}
+.vw-test{font:600 12px/1 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;background:#3a2410;color:#f6eccb;padding:6px 9px;border-radius:99px}
+.vw h1{font-size:40px;margin:28px 0 10px}
+.vw h2{font-size:28px;margin:30px 0 12px}
+.vw-karte{background:#fffaf0;border:1px solid var(--line);padding:18px 20px;margin:12px 0}
+.vw-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 6px}
+.vw-tabs button{min-height:44px;padding:0 16px;border:2px solid #3a2410;background:transparent;color:#3a2410;font:600 15px system-ui,sans-serif;cursor:pointer}
+.vw-tabs button[aria-selected="true"]{background:#3a2410;color:#f6eccb}
+.vw label{display:block;font-weight:600;font-size:15px;margin:14px 0 6px}
+.vw input[type=text],.vw input[type=number],.vw select{min-height:46px;width:100%;max-width:360px;padding:8px 12px;border:2px solid #3a2410;background:#fffaf0;color:#3a2410;font-size:17px;border-radius:0;box-sizing:border-box}
+.vw .button{cursor:pointer;border:0}
+.vw .button.zweit{background:transparent;box-shadow:inset 0 0 0 2px #3a2410}
+.vw-reihe{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.vw-meldung{min-height:24px;margin-top:12px;font-weight:600}
+.vw-meldung.fehler{color:#9b2c12}
+.vw-zahlen{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.vw-zahlen div{background:#fffaf0;border:1px solid var(--line);padding:14px 16px}
+.vw-zahlen strong{display:block;font:400 30px/1.1 'Young Serif',Georgia,serif}
+.vw-best{display:grid;gap:4px}
+.vw-best-kopf{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.vw-best-kopf b{font:400 22px 'Young Serif',Georgia,serif}
+.vw-status{font:600 12px/1 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.06em;padding:6px 9px;border-radius:99px;background:#e9dfc0}
+.vw-status.bezahlt{background:#efa51a}.vw-status.versendet,.vw-status.erledigt{background:#cfe3c1}.vw-status.abgebrochen{background:#eee;color:#777}
+.vw-best ul{margin:6px 0 0;padding-left:18px}
+.vw-klein{font-size:14px;opacity:.8}
+.vw-tabelle{width:100%;border-collapse:collapse;font-size:15px}
+.vw-tabelle th,.vw-tabelle td{text-align:left;padding:10px 8px;border-top:1px solid var(--line);vertical-align:middle}
+.vw-tabelle input[type=number]{max-width:110px;min-height:40px;font-size:16px}
+.vw-tabelle input[type=checkbox]{width:22px;height:22px}
+.vw-gross{font:400 46px/1 'Young Serif',Georgia,serif;margin:10px 0}
+[hidden]{display:none!important}
+@media(max-width:640px){.vw-tabelle thead{display:none}.vw-tabelle tr{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;padding:12px 0;border-top:1px solid var(--line)}.vw-tabelle td{border:0;padding:2px 0}.vw-tabelle td:first-child{grid-column:1/-1}.vw-tabelle td[data-l]::before{content:attr(data-l);display:block;font-size:12px;opacity:.7}}
+</style>
+<script defer src="/verwaltung/webauthn.js"></script><script defer src="/verwaltung/app.js"></script></head>
+<body><div class="vw">
+<div class="vw-kopf"><img src="/assets/logo-kurz.svg" alt="Imkerei Grassler" width="540" height="156"><span class="vw-test" id="testmodus" hidden>Testmodus</span></div>
+
+<section id="anmelden" hidden>
+  <h1>Verwaltung</h1>
+  <p>Melde dich mit deinem Passkey an, also mit Face ID, Fingerabdruck oder der Gerätesperre.</p>
+  <div class="vw-reihe"><button class="button" id="btn-anmelden" type="button">Mit Passkey anmelden</button></div>
+  <div class="vw-karte" id="einrichten" hidden>
+    <h2>Ersten Zugang einrichten</h2>
+    <p>Noch gibt es keinen Passkey. Gib den Einrichtungscode ein, den du von Elija bekommen hast.</p>
+    <label for="code">Einrichtungscode</label><input id="code" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <label for="name-erst">Name für dieses Gerät</label><input id="name-erst" type="text" placeholder="z. B. Thiemos iPhone">
+    <div class="vw-reihe"><button class="button" id="btn-einrichten" type="button">Passkey anlegen</button></div>
+  </div>
+  <p class="vw-meldung" id="meldung-anmelden" role="status"></p>
+</section>
+
+<section id="app" hidden>
+  <div class="vw-tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="bestellungen">Bestellungen</button>
+    <button role="tab" aria-selected="false" data-tab="geraet">Kartengerät</button>
+    <button role="tab" aria-selected="false" data-tab="sortiment">Sortiment & Preise</button>
+    <button role="tab" aria-selected="false" data-tab="zugang">Zugang</button>
+  </div>
+
+  <div data-panel="bestellungen">
+    <div class="vw-zahlen"><div><span class="vw-klein">Heute bezahlt</span><strong id="u-heute">–</strong></div><div><span class="vw-klein">Dieser Monat</span><strong id="u-monat">–</strong></div></div>
+    <label for="filter">Anzeigen</label>
+    <select id="filter"><option value="">Alle aktuellen</option><option value="bezahlt">Bezahlt, noch zu erledigen</option><option value="offen">Offen (noch nicht bezahlt)</option><option value="versendet">Versendet</option><option value="erledigt">Erledigt</option><option value="abgebrochen">Abgebrochen</option></select>
+    <div id="liste"></div>
+  </div>
+
+  <div data-panel="geraet" hidden>
+    <h2>Betrag ans Kartengerät schicken</h2>
+    <p>Der Betrag erscheint direkt auf deinem Mollie-Gerät. Die Kundin oder der Kunde hält dann nur noch die Karte hin.</p>
+    <label for="geraet">Gerät</label><select id="geraet"><option value="">Wird geladen …</option></select>
+    <label for="betrag">Betrag in Euro</label><input id="betrag" type="text" inputmode="decimal" placeholder="0,00">
+    <label for="was">Wofür (optional)</label><input id="was" type="text" placeholder="z. B. 2 × Waldhonig 500 g">
+    <div class="vw-reihe"><button class="button" id="btn-senden" type="button">Ans Gerät senden</button></div>
+    <div class="vw-karte" id="geraet-status" hidden><p class="vw-klein" id="gs-nr"></p><p class="vw-gross" id="gs-text"></p>
+      <div class="vw-reihe"><button class="button zweit" id="btn-abbrechen" type="button">Abbrechen</button><a class="text-link" id="gs-test" target="_blank" rel="noopener" hidden>Testzahlung in Mollie bestätigen ↗</a></div></div>
+    <p class="vw-meldung" id="meldung-geraet" role="status"></p>
+  </div>
+
+  <div data-panel="sortiment" hidden>
+    <h2>Sortiment & Preise</h2>
+    <p class="vw-klein">Änderungen gelten sofort auf der Website und an der Hütte. Lager leer lassen, wenn nicht mitgezählt werden soll. Bei jeder bezahlten Bestellung wird das Lager automatisch weniger.</p>
+    <table class="vw-tabelle"><thead><tr><th>Produkt</th><th>Preis €</th><th>Lager</th><th>Aktiv</th><th>Versand</th></tr></thead><tbody id="produkte"></tbody></table>
+    <p class="vw-meldung" id="meldung-sortiment" role="status"></p>
+  </div>
+
+  <div data-panel="zugang" hidden>
+    <h2>Passkeys</h2>
+    <p>Mit jedem dieser Passkeys kann man sich hier anmelden. Leg am besten einen zweiten an, z. B. am Laptop oder für Christoph.</p>
+    <div id="passkeys"></div>
+    <label for="name-neu">Name für den neuen Passkey</label><input id="name-neu" type="text" placeholder="z. B. Christophs Handy">
+    <div class="vw-reihe"><button class="button" id="btn-neu" type="button">Weiteren Passkey anlegen</button><button class="button zweit" id="btn-abmelden" type="button">Abmelden</button></div>
+    <p class="vw-meldung" id="meldung-zugang" role="status"></p>
+  </div>
+</section>
+</div></body></html>

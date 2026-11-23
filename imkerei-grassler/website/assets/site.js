@@ -128,19 +128,72 @@ function init(){leben();
 }
 if(preview){const templates=JSON.parse(document.querySelector('#page-data').textContent);const titles=JSON.parse(document.querySelector('#title-data').textContent);function route(first=false){const raw=location.hash.slice(2)||document.body.dataset.initial;const name=raw.split(/[?#]/)[0];const r=templates[name]?name:'index';const main=document.querySelector('main');main.innerHTML=templates[r];main.dataset.route=r;document.title=titles[r]+' | Imkerei Grassler';nav.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.innerHTML='Menü <span aria-hidden="true">＋</span>';init();const anchor=raw.includes('#')?raw.split('#')[1]:null;if(anchor)document.getElementById(anchor)?.scrollIntoView();else{window.scrollTo(0,0);if(!first)main.querySelector('h1')?.focus({preventScroll:true});}}window.addEventListener('hashchange',()=>route());route(true);}else init();
 
-/* Fassung 10: Selbstbedienung Wolfshof – Summe ausrechnen, Mollie-Zahllink mit offenem Betrag */
-(()=>{const sb=document.querySelector('.sb');if(!sb)return;
-const link=sb.dataset.zahllink||'',total=document.querySelector('#sb-total'),btn=document.querySelector('#sb-zahlen'),hint=document.querySelector('#sb-hinweis'),frei=document.querySelector('#sb-frei');
-const eur=v=>v.toLocaleString('de-AT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
-function calc(){let sum=0;sb.querySelectorAll('.sb-zeile').forEach(z=>{const n=+z.querySelector('output').value||0;sum+=n*parseFloat(z.dataset.preis);z.classList.toggle('aktiv',n>0);z.querySelector('.sb-minus').disabled=n===0;});
- const f=parseFloat((frei.value||'').replace(/\s/g,'').replace(',','.'));if(f>0&&f<1000)sum+=f;sum=Math.round(sum*100)/100;total.textContent=eur(sum);
- const ok=sum>0&&!!link;btn.setAttribute('aria-disabled',ok?'false':'true');btn.href=ok?link:'#';btn.target=ok?'_blank':'';btn.rel=ok?'noopener':'';
- btn.innerHTML=(sum>0?eur(sum)+' bezahlen':'Bezahlen')+' <span aria-hidden="true">↗</span>';
- hint.innerHTML=sum===0?'Wähl zuerst aus, was du mitnimmst.':!link?'Die Bezahlung ist noch nicht eingerichtet.':sum<5?'Der Mindestbetrag ist 5 €.':`Auf der Bezahlseite bitte genau <b>${eur(sum)}</b> eingeben.`;
- if(sum>0&&sum<5){btn.setAttribute('aria-disabled','true');btn.href='#';}}
-sb.querySelectorAll('.sb-zeile').forEach(z=>{const o=z.querySelector('output');o.value=0;
+/* Fassung 11: Laden mit Mollie – Hütte Wolfshof (kanal=wolfshof) und Versand (kanal=online).
+   Mit Server: Preise und Lager kommen von /api/produkte, Bezahlung über /api/zahlung.
+   Ohne Server (z. B. Vorschau auf GitHub Pages): Hütte fällt auf den festen Mollie-Zahllink zurück. */
+(()=>{
+const meta=document.querySelector('meta[name="api-basis"]');
+const API=meta?(meta.content?meta.content.replace(/\/$/,''):(/github\.io$/.test(location.hostname)||location.protocol==='file:'?null:'')):null;
+const eur=c=>(c/100).toLocaleString('de-AT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function holen(pfad,opt={}){const r=await fetch(API+pfad,{headers:{'content-type':'application/json'},...opt});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.fehler||'Gerade nicht erreichbar. Bitte später nochmal probieren.');return d;}
+
+/* ---------- Danke-Seite ---------- */
+const danke=document.querySelector('#danke-status');
+if(danke){const q=new URLSearchParams(location.search);const b=q.get('b'),t=q.get('t');
+ const h=document.querySelector('#danke-titel'),txt=document.querySelector('#danke-text'),liste=document.querySelector('#danke-liste');
+ if(!b||!t||API===null){h.textContent='Danke!';txt.textContent='Wenn du gerade bezahlt hast, bekommst du die Bestätigung von Mollie per E-Mail.';}
+ else{let n=0;const pruefe=async()=>{try{const d=await holen(`/api/bestellung?b=${encodeURIComponent(b)}&t=${encodeURIComponent(t)}`);
+   liste.innerHTML=d.positionen.map(p=>`<li>${p.menge} × ${esc(p.name)}${p.groesse?' '+esc(p.groesse):''}</li>`).join('')+(d.versand_cent?`<li>Versand ${eur(d.versand_cent)}</li>`:'');
+   document.querySelector('#danke-nr').textContent=`Bestellung ${d.bestellung} · ${eur(d.summe_cent)}`;
+   if(['bezahlt','versendet','erledigt'].includes(d.status)){h.textContent='Danke, ist bezahlt!';txt.textContent=d.kanal==='online'?'Thiemo packt deinen Honig ein und schickt ihn dir. Die Bestätigung von Mollie kommt per E-Mail.':'Guten Appetit! Du kannst deinen Honig jetzt mitnehmen.';danke.dataset.status='bezahlt';}
+   else if(d.status==='abgebrochen'){h.textContent='Nicht bezahlt';txt.innerHTML=`Die Zahlung wurde abgebrochen. <a href="${d.kanal==='online'?'bestellen.html':'wolfshof.html'}">Nochmal versuchen</a>`;danke.dataset.status='abgebrochen';}
+   else{h.textContent='Zahlung wird geprüft …';txt.textContent='Das dauert meist nur ein paar Sekunden.';if(++n<20)setTimeout(pruefe,3000);else txt.textContent='Das dauert länger als sonst. Die Bestätigung kommt per E-Mail, sobald die Zahlung durch ist.';}
+  }catch(e){h.textContent='Danke!';txt.textContent=e.message;}};pruefe();}
+}
+
+/* ---------- Laden (Hütte & Versand) ---------- */
+const sb=document.querySelector('.sb');if(!sb)return;
+const kanal=sb.dataset.kanal||'wolfshof';
+const total=sb.querySelector('#sb-total'),btn=sb.querySelector('#sb-zahlen'),hint=sb.querySelector('#sb-hinweis'),frei=sb.querySelector('#sb-frei'),listen=sb.querySelector('.sb-produkte');
+const zeileVersand=sb.querySelector('#sb-versand');
+let versand={mindestCent:1000,freiAbCent:5000,kostenCent:460},sende=false;
+const TITEL={rein:'Blüten-, Akazien- & Waldhonig',waben:'Waben',misch:'Mischhonige'};
+function zeile(p){const aus=p.ausverkauft;return `<li class="sb-zeile${aus?' aus':''}" data-id="${esc(p.id)}" data-preis="${p.preis_cent/100}"><div><b>${esc(p.name)}</b><span>${esc(p.groesse)} · ${eur(p.preis_cent)}${aus?' · ausverkauft':p.nur_noch?` · nur noch ${p.nur_noch}`:''}</span></div>`+
+ `<div class="sb-stepper"><button type="button" class="sb-minus" aria-label="${esc(p.name)} ${esc(p.groesse)}: eins weniger">−</button><output aria-live="polite">0</output>`+
+ `<button type="button" class="sb-plus" aria-label="${esc(p.name)} ${esc(p.groesse)}: eins mehr"${aus?' disabled':''}>+</button></div></li>`;}
+function render(produkte){const gruppen={};produkte.filter(p=>p.preis_cent!==null&&(kanal!=='online'||p.online)).forEach(p=>(gruppen[p.kategorie]??=[]).push(p));
+ listen.innerHTML=Object.keys(TITEL).filter(k=>gruppen[k]).map(k=>`<section><h2 class="sb-titel">${TITEL[k]}</h2><ul class="sb-liste">${gruppen[k].map(zeile).join('')}</ul></section>`).join('');verbinde();}
+function verbinde(){sb.querySelectorAll('.sb-zeile').forEach(z=>{const o=z.querySelector('output');o.value=o.value||0;
  z.querySelector('.sb-plus').addEventListener('click',()=>{o.value=Math.min(20,(+o.value||0)+1);calc();});
- z.querySelector('.sb-minus').addEventListener('click',()=>{o.value=Math.max(0,(+o.value||0)-1);calc();});});
-frei.addEventListener('input',calc);
-btn.addEventListener('click',e=>{if(btn.getAttribute('aria-disabled')==='true')e.preventDefault();});
-calc();})();
+ z.querySelector('.sb-minus').addEventListener('click',()=>{o.value=Math.max(0,(+o.value||0)-1);calc();});});calc();}
+function positionen(){return[...sb.querySelectorAll('.sb-zeile')].map(z=>({id:z.dataset.id,menge:+z.querySelector('output').value||0,preis:Math.round(parseFloat(z.dataset.preis)*100)})).filter(p=>p.menge>0);}
+function etikett(){if(!frei)return 0;const f=parseFloat((frei.value||'').replace(/\s/g,'').replace(',','.'));return f>0&&f<200?Math.round(f*100):0;}
+const zahllink=sb.dataset.zahllink||'';
+function calc(){sb.querySelectorAll('.sb-zeile').forEach(z=>{const n=+z.querySelector('output').value||0;z.classList.toggle('aktiv',n>0);z.querySelector('.sb-minus').disabled=n===0;});
+ const waren=positionen().reduce((s,p)=>s+p.menge*p.preis,0)+etikett();
+ let summe=waren,ok=waren>0,text='';
+ if(kanal==='online'){const v=waren===0?0:waren>=versand.freiAbCent?0:versand.kostenCent;summe=waren+v;
+  if(zeileVersand)zeileVersand.textContent=waren===0?'':v?`inkl. ${eur(v)} Versand · ab ${eur(versand.freiAbCent)} versandkostenfrei`:'versandkostenfrei';
+  if(waren>0&&waren<versand.mindestCent){ok=false;text=`Der Mindestbestellwert ist ${eur(versand.mindestCent)}.`;}}
+ total.textContent=eur(summe);
+ if(API===null&&kanal==='wolfshof'){if(!zahllink){ok=false;text=summe?'Die Bezahlung ist noch nicht eingerichtet.':'';}else if(summe>0&&summe<500){ok=false;text='Der Mindestbetrag ist 5 €.';}else if(ok)text=`Auf der Bezahlseite bitte genau <b>${eur(summe)}</b> eingeben.`;}
+ else if(API===null){ok=false;}
+ else if(ok&&!text)text=kanal==='online'?'Weiter geht’s zur sicheren Bezahlseite von Mollie.':'Der Betrag ist auf der Bezahlseite schon eingetragen.';
+ hint.innerHTML=summe===0?'Wähl zuerst aus, was du mitnimmst.':text;
+ btn.setAttribute('aria-disabled',ok&&!sende?'false':'true');
+ btn.innerHTML=(summe>0?eur(summe)+' bezahlen':'Bezahlen')+' <span aria-hidden="true">↗</span>';
+ if(API===null&&kanal==='wolfshof'){btn.href=ok?zahllink:'#';btn.target=ok?'_blank':'';btn.rel=ok?'noopener':'';}}
+frei?.addEventListener('input',calc);
+const fehlerBox=sb.querySelector('#sb-fehler');
+function zeigeFehler(t){if(fehlerBox){fehlerBox.textContent=t;fehlerBox.hidden=!t;if(t)fehlerBox.scrollIntoView({block:'nearest'});}else hint.textContent=t;}
+btn.addEventListener('click',async e=>{if(btn.getAttribute('aria-disabled')==='true'){e.preventDefault();return;}if(API===null)return;e.preventDefault();zeigeFehler('');
+ const daten={kanal,positionen:positionen().map(({id,menge})=>({id,menge}))};
+ if(kanal==='wolfshof')daten.etikett_cent=etikett();
+ if(kanal==='online'){const form=document.querySelector('#sb-kunde');if(form&&!form.reportValidity())return;const f=new FormData(form);daten.kunde=Object.fromEntries(['name','email','telefon','strasse','plz','ort','notiz'].map(k=>[k,f.get(k)||'']));}
+ sende=true;calc();btn.innerHTML='Einen Moment …';
+ try{const d=await holen('/api/zahlung',{method:'POST',body:JSON.stringify(daten)});if(!d.checkout)throw new Error('Keine Bezahlseite bekommen.');location.href=d.checkout;}
+ catch(err){sende=false;calc();zeigeFehler(err.message);}});
+if(API!==null){holen('/api/produkte').then(d=>{versand=d.versand||versand;render(d.produkte);sb.classList.add('live');}).catch(()=>{if(kanal==='online')zeigeFehler('Das Sortiment konnte gerade nicht geladen werden.');verbinde();});}
+else{if(kanal==='online'){sb.hidden=true;document.querySelector('#sb-bald')?.removeAttribute('hidden');}verbinde();}
+})();

@@ -1,0 +1,22 @@
+{
+  "name": "imkerei-grassler-server",
+  "version": "1.0.0",
+  "description": "Server der Imkerei Grassler: Website, Mollie-Zahlungen, Verwaltung mit Passkey (Cloudflare Workers + D1)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "attrappe": "node scripts/mollie-attrappe.mjs",
+    "db:lokal": "wrangler d1 migrations apply DB --local",
+    "db:live": "wrangler d1 migrations apply DB --remote",
+    "deploy": "wrangler deploy"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "wrangler": "^4.166.0"
+  },
+  "dependencies": {
+    "@simplewebauthn/browser": "^14.0.0",
+    "@simplewebauthn/server": "^14.1.0"
+  },
+  "private": true,
+  "type": "module"
+}

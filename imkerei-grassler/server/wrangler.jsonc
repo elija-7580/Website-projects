@@ -1,0 +1,36 @@
+// SPDX-License-Identifier: LicenseRef-AllRightsReserved
+// SPDX-FileCopyrightText: 2026 Elija Samuel Friedrich-Ulrich
+// Server der Imkerei Grassler: liefert die Website aus, verbindet Mollie, Verwaltung mit Passkey.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "imkerei-grassler",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // Die öffentliche Website kommt direkt aus ../website
+  "assets": {
+    "directory": "../website",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/verwaltung", "/verwaltung/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "imkerei-grassler",
+      // Nach "npx wrangler d1 create imkerei-grassler" hier die ausgegebene ID eintragen
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "rules": [
+    { "type": "Text", "globs": ["**/*.html", "**/*.umd.min.js", "**/*.txt"], "fallthrough": true }
+  ],
+  "vars": {
+    // Weitere Adressen, von denen aus die Website den Server ansprechen darf (Vorschau auf GitHub Pages)
+    "ERLAUBTE_URSPRUENGE": "https://elija-7580.github.io"
+  },
+  "observability": { "enabled": true }
+  // Geheimnisse (nicht hier eintragen!): MOLLIE_API_KEY, EINRICHTUNGSCODE
+  // npx wrangler secret put MOLLIE_API_KEY
+  // npx wrangler secret put EINRICHTUNGSCODE
+}

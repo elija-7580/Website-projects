@@ -1,0 +1,179 @@
+// SPDX-License-Identifier: LicenseRef-AllRightsReserved
+// SPDX-FileCopyrightText: 2026 Elija Samuel Friedrich-Ulrich
+// Oberfläche der Verwaltung (wird als /verwaltung/app.js ausgeliefert).
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const eur = (c) => (c / 100).toLocaleString('de-AT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  const zuCent = (t) => { const v = parseFloat(String(t).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(v) ? Math.round(v * 100) : NaN; };
+  const datum = (s) => s ? new Date(s.replace(' ', 'T') + 'Z').toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+  const KANAL = { wolfshof: 'Hütte Wolfshof', online: 'Versand', 'vor-ort': 'Kartengerät' };
+  const STATUS = { offen: 'Offen', bezahlt: 'Bezahlt', abgebrochen: 'Abgebrochen', versendet: 'Versendet', erledigt: 'Erledigt' };
+
+  async function api(pfad, { methode = 'GET', daten } = {}) {
+    const r = await fetch('/api/verwaltung/' + pfad, {
+      method: methode, credentials: 'same-origin',
+      headers: { 'content-type': 'application/json', 'x-verwaltung': '1' },
+      body: daten ? JSON.stringify(daten) : undefined,
+    });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401 && !pfad.startsWith('anmelden')) { zeigeAnmeldung(); throw new Error(d.fehler || 'Bitte anmelden'); }
+    if (!r.ok) throw new Error(d.fehler || 'Fehler ' + r.status);
+    return d;
+  }
+  const melde = (id, text, fehler = false) => { const el = $(id); el.textContent = text; el.classList.toggle('fehler', fehler); };
+
+  // ---------- Anmeldung ----------
+  async function start() {
+    const s = await api('status');
+    $('#testmodus').hidden = !s.testmodus;
+    if (s.angemeldet) return zeigeApp();
+    zeigeAnmeldung(s);
+  }
+  function zeigeAnmeldung(s) {
+    $('#app').hidden = true; $('#anmelden').hidden = false;
+    if (s) { $('#einrichten').hidden = s.eingerichtet; $('#btn-anmelden').hidden = !s.eingerichtet; }
+  }
+  $('#btn-anmelden').addEventListener('click', async () => {
+    melde('#meldung-anmelden', '');
+    try {
+      const optionen = await api('anmelden/optionen', { methode: 'POST', daten: {} });
+      const antwort = await SimpleWebAuthnBrowser.startAuthentication({ optionsJSON: optionen });
+      await api('anmelden/pruefen', { methode: 'POST', daten: { antwort } });
+      zeigeApp();
+    } catch (e) { melde('#meldung-anmelden', e.name === 'NotAllowedError' ? 'Anmeldung abgebrochen.' : e.message, true); }
+  });
+  async function passkeyAnlegen(code, name, meldungId) {
+    const optionen = await api('registrieren/optionen', { methode: 'POST', daten: { code } });
+    const antwort = await SimpleWebAuthnBrowser.startRegistration({ optionsJSON: optionen });
+    await api('registrieren/pruefen', { methode: 'POST', daten: { code, name, antwort } });
+  }
+  $('#btn-einrichten').addEventListener('click', async () => {
+    melde('#meldung-anmelden', '');
+    try { await passkeyAnlegen($('#code').value.trim(), $('#name-erst').value.trim(), '#meldung-anmelden'); zeigeApp(); }
+    catch (e) { melde('#meldung-anmelden', e.name === 'NotAllowedError' ? 'Abgebrochen.' : e.message, true); }
+  });
+
+  // ---------- App ----------
+  function zeigeApp() {
+    $('#anmelden').hidden = true; $('#app').hidden = false;
+    ladeBestellungen();
+  }
+  document.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+    document.querySelectorAll('[data-tab]').forEach((x) => x.setAttribute('aria-selected', x === b ? 'true' : 'false'));
+    document.querySelectorAll('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== b.dataset.tab; });
+    ({ bestellungen: ladeBestellungen, geraet: ladeGeraete, sortiment: ladeSortiment, zugang: ladePasskeys })[b.dataset.tab]();
+  }));
+
+  async function ladeBestellungen() {
+    const d = await api('bestellungen' + ($('#filter').value ? '?status=' + $('#filter').value : ''));
+    $('#testmodus').hidden = !d.testmodus;
+    $('#u-heute').textContent = eur(d.umsatz.heute); $('#u-monat').textContent = eur(d.umsatz.monat);
+    $('#liste').innerHTML = d.bestellungen.length ? d.bestellungen.map((b) => {
+      const k = b.kunde;
+      const aktionen = [
+        b.status === 'offen' ? `<button class="button zweit" data-abgleich="${b.id}">Status prüfen</button>` : '',
+        b.status === 'bezahlt' && b.kanal === 'online' ? `<button class="button" data-setze="versendet" data-id="${b.id}">Als versendet markieren</button>` : '',
+        ['bezahlt', 'versendet'].includes(b.status) ? `<button class="button zweit" data-setze="erledigt" data-id="${b.id}">Erledigt</button>` : '',
+      ].join('');
+      return `<article class="vw-karte vw-best"><div class="vw-best-kopf"><b>${esc(eur(b.summe_cent))}</b><span class="vw-status ${esc(b.status)}">${esc(STATUS[b.status] || b.status)}</span></div>
+        <div class="vw-klein">${esc(b.id)} · ${esc(KANAL[b.kanal] || b.kanal)} · ${esc(datum(b.erstellt))}${b.versand_cent ? ' · inkl. ' + esc(eur(b.versand_cent)) + ' Versand' : ''}</div>
+        <ul>${b.positionen.map((p) => `<li>${p.menge} × ${esc(p.name)}${p.groesse ? ' ' + esc(p.groesse) : ''} <span class="vw-klein">(${esc(eur(p.preis_cent))})</span></li>`).join('')}</ul>
+        ${k ? `<p><b>${esc(k.name)}</b><br>${esc(k.strasse)}<br>${esc(k.plz)} ${esc(k.ort)}<br><a href="mailto:${esc(k.email)}">${esc(k.email)}</a>${k.telefon ? ' · ' + esc(k.telefon) : ''}${k.notiz ? '<br><i>' + esc(k.notiz) + '</i>' : ''}</p>` : ''}
+        ${aktionen ? `<div class="vw-reihe">${aktionen}</div>` : ''}</article>`;
+    }).join('') : '<p class="vw-karte">Keine Bestellungen.</p>';
+  }
+  $('#filter').addEventListener('change', ladeBestellungen);
+  $('#liste').addEventListener('click', async (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    b.disabled = true;
+    try {
+      if (b.dataset.abgleich) await api(`bestellungen/${b.dataset.abgleich}/abgleichen`, { methode: 'POST', daten: {} });
+      if (b.dataset.setze) await api(`bestellungen/${b.dataset.id}`, { methode: 'PATCH', daten: { status: b.dataset.setze } });
+      await ladeBestellungen();
+    } catch (err) { alertLeise(err.message); b.disabled = false; }
+  });
+  const alertLeise = (t) => { const p = document.createElement('p'); p.className = 'vw-meldung fehler'; p.textContent = t; $('#liste').prepend(p); };
+
+  // ---------- Kartengerät ----------
+  let laufend = null, pollTimer = null;
+  async function ladeGeraete() {
+    melde('#meldung-geraet', '');
+    try {
+      const d = await api('geraete');
+      $('#geraet').innerHTML = d.geraete.length ? d.geraete.map((g) => `<option value="${esc(g.id)}">${esc(g.beschreibung)}${g.status && g.status !== 'active' ? ' (' + esc(g.status) + ')' : ''}</option>`).join('') : '<option value="">Kein Gerät gefunden</option>';
+      const gemerkt = localStorageSicher('gr_geraet'); if (gemerkt && d.geraete.some((g) => g.id === gemerkt)) $('#geraet').value = gemerkt;
+    } catch (e) { $('#geraet').innerHTML = '<option value="">–</option>'; melde('#meldung-geraet', e.message, true); }
+  }
+  function localStorageSicher(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch { return null; } }
+  $('#btn-senden').addEventListener('click', async () => {
+    melde('#meldung-geraet', '');
+    const cent = zuCent($('#betrag').value);
+    if (!(cent >= 50)) return melde('#meldung-geraet', 'Bitte einen Betrag ab 0,50 € eingeben.', true);
+    if (!$('#geraet').value) return melde('#meldung-geraet', 'Bitte ein Gerät auswählen.', true);
+    localStorageSicher('gr_geraet', $('#geraet').value);
+    $('#btn-senden').disabled = true;
+    try {
+      const d = await api('geraet-zahlung', { methode: 'POST', daten: { terminal_id: $('#geraet').value, betrag_cent: cent, beschreibung: $('#was').value } });
+      laufend = d.bestellung;
+      $('#geraet-status').hidden = false; $('#gs-nr').textContent = d.bestellung + ' · ' + eur(cent);
+      $('#gs-text').textContent = 'Wartet aufs Gerät …';
+      $('#gs-test').hidden = !d.test_status_url; if (d.test_status_url) $('#gs-test').href = d.test_status_url;
+      $('#btn-abbrechen').hidden = false;
+      beobachte(Date.now());
+    } catch (e) { melde('#meldung-geraet', e.message, true); $('#btn-senden').disabled = false; }
+  });
+  function beobachte(start) {
+    clearTimeout(pollTimer);
+    pollTimer = setTimeout(async () => {
+      try {
+        const d = await api(`bestellungen/${laufend}/abgleichen`, { methode: 'POST', daten: {} });
+        if (d.status === 'bezahlt') return fertig('Bezahlt ✓');
+        if (d.status === 'abgebrochen') return fertig('Abgebrochen');
+      } catch {}
+      if (Date.now() - start < 3 * 60e3) beobachte(start); else fertig('Kein Ergebnis. Bitte in den Bestellungen nachsehen.');
+    }, 2000);
+  }
+  function fertig(text) { $('#gs-text').textContent = text; $('#gs-test').hidden = true; $('#btn-abbrechen').hidden = true; $('#btn-senden').disabled = false; $('#betrag').value = ''; $('#was').value = ''; }
+  $('#btn-abbrechen').addEventListener('click', async () => {
+    try { const d = await api(`geraet-zahlung/${laufend}/abbrechen`, { methode: 'POST', daten: {} }); if (d.status === 'abgebrochen') fertig('Abgebrochen'); }
+    catch (e) { melde('#meldung-geraet', e.message, true); }
+  });
+
+  // ---------- Sortiment ----------
+  async function ladeSortiment() {
+    const d = await api('produkte');
+    $('#produkte').innerHTML = d.produkte.map((p) => `<tr data-id="${esc(p.id)}"><td><b>${esc(p.name)}</b><br><span class="vw-klein">${esc(p.groesse)}</span></td>
+      <td data-l="Preis €">${p.preis_cent === null ? '<span class="vw-klein">laut Etikett</span>' : `<input type="number" step="0.01" min="0" data-f="preis" value="${(p.preis_cent / 100).toFixed(2)}" aria-label="Preis ${esc(p.name)} ${esc(p.groesse)}">`}</td>
+      <td data-l="Lager"><input type="number" step="1" min="0" data-f="lager" value="${p.lager ?? ''}" placeholder="–" aria-label="Lager ${esc(p.name)} ${esc(p.groesse)}"></td>
+      <td data-l="Aktiv"><input type="checkbox" data-f="aktiv" ${p.aktiv ? 'checked' : ''} aria-label="${esc(p.name)} ${esc(p.groesse)} aktiv"></td>
+      <td data-l="Versand"><input type="checkbox" data-f="online" ${p.online ? 'checked' : ''} aria-label="${esc(p.name)} ${esc(p.groesse)} im Versand"></td></tr>`).join('');
+  }
+  $('#produkte').addEventListener('change', async (e) => {
+    const tr = e.target.closest('tr'); const f = e.target.dataset.f; if (!tr || !f) return;
+    const daten = {};
+    if (f === 'preis') { const c = zuCent(e.target.value); if (!(c >= 0)) return melde('#meldung-sortiment', 'Ungültiger Preis', true); daten.preis_cent = c; }
+    if (f === 'lager') daten.lager = e.target.value === '' ? null : parseInt(e.target.value, 10);
+    if (f === 'aktiv' || f === 'online') daten[f] = e.target.checked;
+    try { await api('produkte/' + tr.dataset.id, { methode: 'PATCH', daten }); melde('#meldung-sortiment', 'Gespeichert ✓'); }
+    catch (err) { melde('#meldung-sortiment', err.message, true); }
+  });
+
+  // ---------- Zugang ----------
+  async function ladePasskeys() {
+    const d = await api('passkeys');
+    $('#passkeys').innerHTML = d.passkeys.map((p) => `<div class="vw-karte vw-best-kopf"><span><b>${esc(p.name)}</b><br><span class="vw-klein">angelegt ${esc(datum(p.erstellt))}${p.zuletzt ? ' · zuletzt ' + esc(datum(p.zuletzt)) : ''}</span></span>${d.passkeys.length > 1 ? `<button class="button zweit" data-loesch="${esc(p.id)}">Entfernen</button>` : ''}</div>`).join('');
+  }
+  $('#passkeys').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-loesch]'); if (!b) return;
+    try { await api('passkeys/' + b.dataset.loesch, { methode: 'DELETE' }); ladePasskeys(); } catch (err) { melde('#meldung-zugang', err.message, true); }
+  });
+  $('#btn-neu').addEventListener('click', async () => {
+    melde('#meldung-zugang', '');
+    try { await passkeyAnlegen('', $('#name-neu').value.trim()); $('#name-neu').value = ''; melde('#meldung-zugang', 'Passkey angelegt ✓'); ladePasskeys(); }
+    catch (e) { melde('#meldung-zugang', e.name === 'NotAllowedError' ? 'Abgebrochen.' : e.name === 'InvalidStateError' ? 'Auf diesem Gerät gibt es schon einen Passkey für die Verwaltung.' : e.message, true); }
+  });
+  $('#btn-abmelden').addEventListener('click', async () => { await api('abmelden', { methode: 'POST', daten: {} }); location.reload(); });
+
+  start().catch((e) => { $('#anmelden').hidden = false; melde('#meldung-anmelden', e.message, true); });
+})();

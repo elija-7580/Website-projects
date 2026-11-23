@@ -436,3 +436,12 @@ body{background:radial-gradient(1100px 620px at 92% -8%,rgba(239,165,26,.17),tra
 @media print{@page{size:A5 portrait;margin:0}.schild-seite{background:none;padding:0}.schild-tipp{display:none}.schild{box-shadow:none;margin:0}}
 .sb-summe strong{white-space:nowrap}
 @media(max-width:520px){.sb-summe strong{font-size:28px}.sb-summe{gap:6px 12px}.sb-zahlen{padding-left:14px;padding-right:14px}}
+/* Fassung 11: Laden mit Mollie */
+.sb-zeile.aus{opacity:.5}
+.sb-fehler{margin:20px 0 0;padding:12px 16px;border-left:4px solid #9b2c12;background:#fbe9e1;font-weight:600}
+.sb-kunde{margin-top:12px}
+.sb-kunde .form-grid{margin-top:8px}
+.sb-versand{display:block;font-size:13px;margin-top:2px;text-transform:none!important;letter-spacing:0!important}
+.danke-liste{margin:0 0 28px;padding-left:20px;font-size:17px}
+#danke-status[data-status="bezahlt"] h1::after{content:" ✓";color:var(--accent)}
+.form-grid .full{grid-column:1/-1}

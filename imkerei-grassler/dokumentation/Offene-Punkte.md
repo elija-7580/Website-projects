@@ -22,14 +22,16 @@ Was noch fehlt, ist auf der Website weiterhin gestrichelt als „Platzhalter“ 
 - [ ] „Bio“ im Produktnamen: Nach EU-Bio-Recht darf ein nicht biozertifiziertes Produkt Bio-Zutaten in der Regel nur im Zutatenverzeichnis nennen. Vor dem Druck bei Kontrollstelle oder Lebensmittelaufsicht klären.
 
 ## Selbstbedienung Wolfshof (Fassung 10)
-- [ ] Thiemo legt im Mollie-Dashboard einen Zahllink mit offenem Betrag (Mindestbetrag 5 €) an; Link in `website/wolfshof.html` bei `data-zahllink` eintragen.
+- [ ] Server einrichten (Anleitung `server/README.md`): Cloudflare-Konto, D1, Mollie-Schlüssel, Einrichtungscode, Passkeys.
+- [ ] Notlösung bis dahin: Zahllink mit offenem Betrag in `website/wolfshof.html` bei `data-zahllink`.
+- [ ] Prüfen, ob Thiemos Mollie-Gerät über die Terminals API ansprechbar ist.
 - [ ] Schild `website/wolfshof-schild.html` (A5, QR-Code auf `wolfshof.html`) ausdrucken. Bei Umzug auf imkerei-grassler.at QR-Code neu erzeugen.
 - [ ] Bargeld in der Hütte ja/nein.
 - Thiemos Kartengerät ist von Mollie: Zahlungen am Gerät und über die Website landen im selben Mollie-Konto.
 
 ## Versand & Zahlung
 - [ ] Versanddienst und Lieferzeit.
-- [ ] Mollie einrichten; Zahlungslink pro Bestellung oder Shop entscheiden. Die Website hat keinen Checkout.
+- [x] Online-Bestellung mit Mollie-Checkout gebaut (`website/bestellen.html`, Server nötig).
 - [ ] Fernabsatz: Widerrufsbelehrung, AGB, Preisangaben inkl. Versand rechtlich prüfen lassen.
 
 ## Gastronomie & Partnerschaft

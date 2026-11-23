@@ -21,6 +21,12 @@ Was noch fehlt, ist auf der Website weiterhin gestrichelt als „Platzhalter“ 
 - [ ] Etiketten als „Honig mit Zutaten“ (Zutatenverzeichnis, Allergene, Nährwerte, Mengenangabe der Zutat).
 - [ ] „Bio“ im Produktnamen: Nach EU-Bio-Recht darf ein nicht biozertifiziertes Produkt Bio-Zutaten in der Regel nur im Zutatenverzeichnis nennen. Vor dem Druck bei Kontrollstelle oder Lebensmittelaufsicht klären.
 
+## Selbstbedienung Wolfshof (Fassung 10)
+- [ ] Thiemo legt im Mollie-Dashboard einen Zahllink mit offenem Betrag (Mindestbetrag 5 €) an; Link in `website/wolfshof.html` bei `data-zahllink` eintragen.
+- [ ] Schild `website/wolfshof-schild.html` (A5, QR-Code auf `wolfshof.html`) ausdrucken. Bei Umzug auf imkerei-grassler.at QR-Code neu erzeugen.
+- [ ] Bargeld in der Hütte ja/nein.
+- Thiemos Kartengerät ist von Mollie: Zahlungen am Gerät und über die Website landen im selben Mollie-Konto.
+
 ## Versand & Zahlung
 - [ ] Versanddienst und Lieferzeit.
 - [ ] Mollie einrichten; Zahlungslink pro Bestellung oder Shop entscheiden. Die Website hat keinen Checkout.

@@ -398,3 +398,41 @@ body{background:radial-gradient(1100px 620px at 92% -8%,rgba(239,165,26,.17),tra
 @media(max-width:800px){.misch-grid,.misch-info{grid-template-columns:1fr 1fr}.paket-bedingungen{grid-template-columns:1fr 1fr}.sprung{margin-top:-12px}}
 @media(max-width:520px){.misch-grid{grid-template-columns:1fr}.misch-info{grid-template-columns:1fr 1fr 1fr;gap:12px}.misch-zahl{font-size:26px}.paket-bedingungen{grid-template-columns:1fr}}
 @media print{.misch-karte .text-link{display:none}}
+/* Fassung 10: Selbstbedienung Wolfshof */
+.sb-schritte{margin:8px 0 40px}
+.sb{max-width:760px}
+.sb-titel{font-size:26px;margin:36px 0 10px}
+.sb-titel small{font:600 13px/1 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-left:8px;opacity:.75}
+.sb-liste{list-style:none;margin:0;padding:0}
+.sb-zeile{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--line)}
+.sb-zeile:last-child{border-bottom:1px solid var(--line)}
+.sb-zeile b{display:block;font-size:17px}.sb-zeile span{font-size:15px;opacity:.85}
+.sb-zeile.aktiv b::after{content:" ✓";color:var(--accent)}
+.sb-stepper{display:flex;align-items:center;gap:6px}
+.sb-stepper button{width:44px;height:44px;border-radius:50%;border:2px solid var(--ink);background:transparent;color:var(--ink);font-size:22px;line-height:1;cursor:pointer}
+.sb-stepper .sb-plus{background:var(--accent);border-color:var(--accent)}
+.sb-stepper button:disabled{opacity:.3;cursor:default}
+.sb-stepper output{min-width:28px;text-align:center;font:400 22px/1 'Young Serif',Georgia,serif}
+.sb-frei{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sb-euro{display:flex;align-items:center;gap:6px;font-size:18px}
+.sb-euro input{width:110px;min-height:44px;font-size:18px;text-align:right;padding:6px 10px;border:2px solid var(--ink);background:#fffaf0;color:var(--ink);border-radius:0}
+.sb-summe{position:sticky;bottom:0;z-index:5;margin:32px -16px 0;padding:16px;background:var(--bg,#f6eccb);border-top:2px solid var(--ink);display:grid;grid-template-columns:1fr auto;gap:6px 20px;align-items:center;box-shadow:0 -10px 24px -18px rgba(58,36,16,.5)}
+.sb-summe span{font-size:14px;text-transform:uppercase;letter-spacing:.08em}
+.sb-summe strong{display:block;font:400 34px/1.1 'Young Serif',Georgia,serif}
+.sb-zahlen[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+.sb-hinweis{grid-column:1/-1;margin:0;font-size:15px}
+.schild-seite{background:#e9dfc0;min-height:100vh;padding:24px}
+.schild-tipp{max-width:148mm;margin:0 auto 14px;font-size:14px}
+.schild{width:148mm;min-height:210mm;margin:0 auto;background:#fffaf0;color:#3a2410;padding:12mm 12mm 10mm;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 10px 30px rgba(58,36,16,.2)}
+.schild-logo{width:62mm;height:auto}
+.schild h1{font-size:34pt;line-height:1;margin:7mm 0 3mm}
+.schild-lead{font-size:12.5pt;margin:0 0 5mm}
+.schild .qr{width:62mm;height:62mm}
+.schild ol{text-align:left;margin:5mm 0 0;padding-left:6mm;font-size:12pt;line-height:1.6}
+.schild-preise{display:flex;gap:8mm;margin:6mm 0 0;padding-top:4mm;border-top:1.5px solid #3a2410}
+.schild-preise div{display:flex;flex-direction:column}
+.schild-preise dt{font-size:10.5pt}.schild-preise dd{margin:0;font:400 20pt/1.1 'Young Serif',Georgia,serif}
+.schild-fuss{margin-top:auto;padding-top:5mm;font-size:10.5pt}
+@media print{@page{size:A5 portrait;margin:0}.schild-seite{background:none;padding:0}.schild-tipp{display:none}.schild{box-shadow:none;margin:0}}
+.sb-summe strong{white-space:nowrap}
+@media(max-width:520px){.sb-summe strong{font-size:28px}.sb-summe{gap:6px 12px}.sb-zahlen{padding-left:14px;padding-right:14px}}

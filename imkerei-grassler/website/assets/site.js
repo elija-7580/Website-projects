@@ -127,3 +127,20 @@ function init(){leben();
  document.querySelector('#save').onclick=()=>{const u=URL.createObjectURL(new Blob([document.querySelector('#draft-text').value],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download='Anfrage-Imkerei-Grassler.txt';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);document.querySelector('#copy-status').textContent='Textdatei vorbereitet. Noch nicht verschickt.';};
 }
 if(preview){const templates=JSON.parse(document.querySelector('#page-data').textContent);const titles=JSON.parse(document.querySelector('#title-data').textContent);function route(first=false){const raw=location.hash.slice(2)||document.body.dataset.initial;const name=raw.split(/[?#]/)[0];const r=templates[name]?name:'index';const main=document.querySelector('main');main.innerHTML=templates[r];main.dataset.route=r;document.title=titles[r]+' | Imkerei Grassler';nav.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.innerHTML='Menü <span aria-hidden="true">＋</span>';init();const anchor=raw.includes('#')?raw.split('#')[1]:null;if(anchor)document.getElementById(anchor)?.scrollIntoView();else{window.scrollTo(0,0);if(!first)main.querySelector('h1')?.focus({preventScroll:true});}}window.addEventListener('hashchange',()=>route());route(true);}else init();
+
+/* Fassung 10: Selbstbedienung Wolfshof – Summe ausrechnen, Mollie-Zahllink mit offenem Betrag */
+(()=>{const sb=document.querySelector('.sb');if(!sb)return;
+const link=sb.dataset.zahllink||'',total=document.querySelector('#sb-total'),btn=document.querySelector('#sb-zahlen'),hint=document.querySelector('#sb-hinweis'),frei=document.querySelector('#sb-frei');
+const eur=v=>v.toLocaleString('de-AT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+function calc(){let sum=0;sb.querySelectorAll('.sb-zeile').forEach(z=>{const n=+z.querySelector('output').value||0;sum+=n*parseFloat(z.dataset.preis);z.classList.toggle('aktiv',n>0);z.querySelector('.sb-minus').disabled=n===0;});
+ const f=parseFloat((frei.value||'').replace(/\s/g,'').replace(',','.'));if(f>0&&f<1000)sum+=f;sum=Math.round(sum*100)/100;total.textContent=eur(sum);
+ const ok=sum>0&&!!link;btn.setAttribute('aria-disabled',ok?'false':'true');btn.href=ok?link:'#';btn.target=ok?'_blank':'';btn.rel=ok?'noopener':'';
+ btn.innerHTML=(sum>0?eur(sum)+' bezahlen':'Bezahlen')+' <span aria-hidden="true">↗</span>';
+ hint.innerHTML=sum===0?'Wähl zuerst aus, was du mitnimmst.':!link?'Die Bezahlung ist noch nicht eingerichtet.':sum<5?'Der Mindestbetrag ist 5 €.':`Auf der Bezahlseite bitte genau <b>${eur(sum)}</b> eingeben.`;
+ if(sum>0&&sum<5){btn.setAttribute('aria-disabled','true');btn.href='#';}}
+sb.querySelectorAll('.sb-zeile').forEach(z=>{const o=z.querySelector('output');o.value=0;
+ z.querySelector('.sb-plus').addEventListener('click',()=>{o.value=Math.min(20,(+o.value||0)+1);calc();});
+ z.querySelector('.sb-minus').addEventListener('click',()=>{o.value=Math.max(0,(+o.value||0)-1);calc();});});
+frei.addEventListener('input',calc);
+btn.addEventListener('click',e=>{if(btn.getAttribute('aria-disabled')==='true')e.preventDefault();});
+calc();})();

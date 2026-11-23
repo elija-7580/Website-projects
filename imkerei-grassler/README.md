@@ -68,3 +68,7 @@ Fassung 03 ersetzt Ultramarin, Haferpapier und Graphit durch die Honigpalette un
 ## Fassung 09 (echte Angaben von Thiemo)
 
 Thiemos Angaben eingetragen: Betreiber Thiemo und Christoph Grassler, Adresse Walkersdorf am Kamp, E-Mail, zwei Nummern mit WhatsApp, Wunschdomain imkerei-grassler.at. Sortiment neu: Blüten-, Akazien- und Waldhonig je 250 g/500 g/1 kg um 5/8/15 €, Honigwaben (klein 250 g, groß bis 2,5 kg), Honig mit Wabenstücken, sechs Mischhonige (250 g, 8 €, ab Anfang Jänner) mit zwei neuen Icons (Mohn, Haselnuss), Ausblick Oxymel und Propolis; Cremehonig entfernt. Preise stehen direkt an der Größenauswahl. Karte mit drei Bienenständen (Bienenstock-Markierung) und zwei Abholstellen rund um die Uhr (Glas-Markierung). Partnerschaft mit echten Paketen, Preisen und Bedingungen. Gastronomie mit Großgebinden, Staffelpreisen und Herkunftssatz „100 % regionaler Honig aus dem Kamptal“. Versandkosten auf der Honigseite. Das Anfrageformular öffnet den fertigen Text jetzt per Klick in E-Mail oder WhatsApp; die Website selbst verschickt weiterhin nichts. Impressum mit Betreiberangaben (noch zu prüfen). Offene Punkte: `dokumentation/Offene-Punkte.md` und `website/fuer-thiemo.html`.
+
+## Fassung 10 (Selbstbedienung Wolfshof)
+
+Neue Seite `wolfshof.html`: Kundinnen und Kunden zählen an der Hütte per Handy zusammen, was sie mitnehmen, und zahlen über einen Mollie-Zahllink mit offenem Betrag (Link fehlt noch, Feld `data-zahllink`). `wolfshof-schild.html` ist ein A5-Schild mit QR-Code auf diese Seite. Thiemos Kartengerät ist ebenfalls von Mollie.

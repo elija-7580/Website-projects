@@ -445,3 +445,15 @@ body{background:radial-gradient(1100px 620px at 92% -8%,rgba(239,165,26,.17),tra
 .danke-liste{margin:0 0 28px;padding-left:20px;font-size:17px}
 #danke-status[data-status="bezahlt"] h1::after{content:" ✓";color:var(--accent)}
 .form-grid .full{grid-column:1/-1}
+
+/* Fassung 12: Rechtstexte, Widerruf */
+.widerruf-box{margin:8px 0 48px;padding:24px 24px 8px;background:#fffaf0;border:2px solid var(--ink)}
+.widerruf-box h2{margin-top:0}
+.widerruf-umfang{border:0;padding:0;margin:0}.widerruf-umfang legend{font-weight:600;margin-bottom:6px}.widerruf-umfang label{display:flex;gap:10px;align-items:center;min-height:40px}
+.widerruf-ok{padding:4px 0 16px}.widerruf-ok h3{font-size:26px}
+.muster{padding-left:20px}.muster li{margin:6px 0}
+.agb h2{font-size:24px;margin-top:34px}
+.sb-zustimmung{display:flex;gap:10px;align-items:flex-start;margin:18px 0 0;font-size:16px}.sb-zustimmung input{width:22px;height:22px;margin-top:2px;flex:none}
+.footer a.footer-widerruf{font-weight:700;text-decoration-thickness:2px}
+.todo-zeit{display:inline-block;margin-left:6px;font:600 12px/1 system-ui,sans-serif;padding:4px 7px;border-radius:99px;background:color-mix(in srgb,var(--accent) 30%,transparent)}
+.macht-elija{margin-top:28px;padding:20px 24px;border:1px dashed color-mix(in srgb,var(--ink) 45%,transparent)}.macht-elija h3{font-size:22px;margin:0 0 8px}.macht-elija ul{margin:0;padding-left:20px}

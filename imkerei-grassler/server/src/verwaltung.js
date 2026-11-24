@@ -7,7 +7,7 @@ import {
   generateAuthenticationOptions, verifyAuthenticationResponse,
 } from '@simplewebauthn/server';
 import { isoBase64URL } from '@simplewebauthn/server/helpers';
-import { json, fehler, zufall, sha256, cookie, leseJson, bestellnummer } from './util.js';
+import { json, fehler, zufall, sha256, cookie, leseJson, bestellnummer, basisUrl } from './util.js';
 import { abgleichen, sortiment } from './bestellung.js';
 import { zahlungAnlegen, zahlungAbbrechen, geraeteListe, testmodus, MollieFehler } from './mollie.js';
 
@@ -64,9 +64,16 @@ function codeGleich(a, b) {
   return d === 0;
 }
 
-// Erster Passkey nur mit Einrichtungscode, weitere nur angemeldet
-async function darfRegistrieren(request, env, code) {
+// Einladungslink: einmalig, 7 Tage gültig
+async function einladungGueltig(env, token) {
+  if (typeof token !== 'string' || token.length !== 48) return null;
+  return env.DB.prepare('SELECT * FROM einladungen WHERE hash=? AND ablauf>?').bind(await sha256(token), Date.now()).first();
+}
+
+// Erster Passkey mit Einrichtungscode, weitere angemeldet oder mit Einladungslink
+async function darfRegistrieren(request, env, code, einladung) {
   if (await angemeldet(request, env)) return true;
+  if (einladung) return (await einladungGueltig(env, einladung)) ? true : 'einladung';
   if ((await anzahlPasskeys(env)) > 0) return false;
   const ip = request.headers.get('cf-connecting-ip') || 'lokal';
   if (await gesperrt(env, 'code:' + ip)) return 'gesperrt';
@@ -77,8 +84,9 @@ async function darfRegistrieren(request, env, code) {
 
 async function registrierenOptionen(request, env) {
   const e = await leseJson(request);
-  const ok = await darfRegistrieren(request, env, e.code);
+  const ok = await darfRegistrieren(request, env, e.code, e.einladung);
   if (ok === 'gesperrt') return fehler(429, 'Zu viele Versuche. Bitte in 15 Minuten nochmal.');
+  if (ok === 'einladung') return fehler(403, 'Dieser Einladungslink ist abgelaufen oder wurde schon benutzt. Bitte um einen neuen.');
   if (!ok) return fehler(403, 'Einrichtungscode stimmt nicht');
   const { results } = await env.DB.prepare('SELECT id, transports FROM passkeys').all();
   const optionen = await generateRegistrationOptions({
@@ -93,8 +101,9 @@ async function registrierenOptionen(request, env) {
 
 async function registrierenPruefen(request, env) {
   const e = await leseJson(request, 60000);
-  const ok = await darfRegistrieren(request, env, e.code);
+  const ok = await darfRegistrieren(request, env, e.code, e.einladung);
   if (ok !== true) return fehler(403, 'Nicht erlaubt');
+  const einladung = e.einladung ? await einladungGueltig(env, e.einladung) : null;
   const { id: rpID, origin } = rp(request);
   let v;
   try {
@@ -102,7 +111,8 @@ async function registrierenPruefen(request, env) {
   } catch (err) { return fehler(400, 'Passkey konnte nicht geprüft werden: ' + err.message); }
   if (!v.verified) return fehler(400, 'Passkey nicht bestätigt');
   const c = v.registrationInfo.credential;
-  const name = (typeof e.name === 'string' && e.name.trim().slice(0, 60)) || 'Passkey';
+  const name = (typeof e.name === 'string' && e.name.trim().slice(0, 60)) || einladung?.name || 'Passkey';
+  if (einladung) await env.DB.prepare('DELETE FROM einladungen WHERE hash=?').bind(einladung.hash).run();
   await env.DB.prepare('INSERT INTO passkeys (id, public_key, zaehler, transports, name) VALUES (?,?,?,?,?)')
     .bind(c.id, isoBase64URL.fromBuffer(c.publicKey), c.counter, JSON.stringify(c.transports || []), name).run();
   const schon = await angemeldet(request, env);
@@ -151,9 +161,11 @@ async function bestellungenListe(request, env) {
       COALESCE(SUM(CASE WHEN date(bezahlt_am)=date('now') THEN summe_cent END),0) AS heute,
       COALESCE(SUM(CASE WHEN strftime('%Y-%m',bezahlt_am)=strftime('%Y-%m','now') THEN summe_cent END),0) AS monat
     FROM bestellungen WHERE status IN ('bezahlt','versendet','erledigt')`).first();
+  const widerrufe = (await env.DB.prepare('SELECT * FROM widerrufe WHERE bearbeitet=0 ORDER BY eingang DESC').all()).results;
+  const mailfehler = (await env.DB.prepare("SELECT COUNT(*) AS n FROM mails WHERE ok=0 AND erstellt > datetime('now','-7 days')").first()).n;
   return json({
     bestellungen: results.map((b) => ({ ...b, token: undefined, positionen: JSON.parse(b.positionen), kunde: b.kunde ? JSON.parse(b.kunde) : null })),
-    umsatz, testmodus: testmodus(env),
+    umsatz, testmodus: testmodus(env), widerrufe, mailfehler,
   });
 }
 
@@ -170,10 +182,10 @@ async function bestellungAendern(request, env, id) {
   return json({ ok: true });
 }
 
-async function bestellungAktualisieren(env, id) {
+async function bestellungAktualisieren(env, id, basis) {
   const b = await env.DB.prepare('SELECT * FROM bestellungen WHERE id=?').bind(id).first();
   if (!b) return fehler(404, 'Bestellung nicht gefunden');
-  const neu = await abgleichen(env, b);
+  const neu = await abgleichen(env, b, basis);
   return json({ id: neu.id, status: neu.status });
 }
 
@@ -216,7 +228,7 @@ async function geraetZahlungAbbrechen(env, id) {
   const b = await env.DB.prepare("SELECT * FROM bestellungen WHERE id=? AND kanal='vor-ort'").bind(id).first();
   if (!b?.mollie_id) return fehler(404, 'Nicht gefunden');
   try { await zahlungAbbrechen(env, b.mollie_id); } catch (err) { if (err instanceof MollieFehler) return fehler(400, 'Mollie: ' + err.message); throw err; }
-  return bestellungAktualisieren(env, id);
+  return bestellungAktualisieren(env, id, null);
 }
 
 export async function verwaltungApi(request, env, pfad) {
@@ -226,7 +238,10 @@ export async function verwaltungApi(request, env, pfad) {
   try {
     if (pfad === 'status' && m === 'GET') {
       const s = await angemeldet(request, env);
-      return json({ angemeldet: !!s, eingerichtet: (await anzahlPasskeys(env)) > 0, code_gesetzt: !!env.EINRICHTUNGSCODE, mollie: !!env.MOLLIE_API_KEY, testmodus: testmodus(env) });
+      const tok = new URL(request.url).searchParams.get('einladung');
+      const ein = tok ? await einladungGueltig(env, tok) : null;
+      return json({ angemeldet: !!s, eingerichtet: (await anzahlPasskeys(env)) > 0, code_gesetzt: !!env.EINRICHTUNGSCODE, mollie: !!env.MOLLIE_API_KEY, testmodus: testmodus(env),
+        ...(tok ? { einladung: ein ? { name: ein.name } : null } : {}) });
     }
     if (pfad === 'registrieren/optionen' && m === 'POST') return registrierenOptionen(request, env);
     if (pfad === 'registrieren/pruefen' && m === 'POST') return registrierenPruefen(request, env);
@@ -239,7 +254,19 @@ export async function verwaltungApi(request, env, pfad) {
     if (pfad === 'bestellungen' && m === 'GET') return bestellungenListe(request, env);
     let t;
     if ((t = pfad.match(/^bestellungen\/(GR-[A-Z0-9]{6})$/)) && m === 'PATCH') return bestellungAendern(request, env, t[1]);
-    if ((t = pfad.match(/^bestellungen\/(GR-[A-Z0-9]{6})\/abgleichen$/)) && m === 'POST') return bestellungAktualisieren(env, t[1]);
+    if ((t = pfad.match(/^bestellungen\/(GR-[A-Z0-9]{6})\/abgleichen$/)) && m === 'POST') return bestellungAktualisieren(env, t[1], basisUrl(request, env));
+    if ((t = pfad.match(/^widerrufe\/(\d{1,9})$/)) && m === 'PATCH') {
+      await env.DB.prepare('UPDATE widerrufe SET bearbeitet=1 WHERE id=?').bind(Number(t[1])).run();
+      return json({ ok: true });
+    }
+    if (pfad === 'einladungen' && m === 'POST') {
+      const e = await leseJson(request);
+      const name = (typeof e.name === 'string' && e.name.trim().slice(0, 60)) || 'Neuer Zugang';
+      const token = zufall(24);
+      await env.DB.prepare('DELETE FROM einladungen WHERE ablauf < ?').bind(Date.now()).run();
+      await env.DB.prepare('INSERT INTO einladungen (hash, name, ablauf) VALUES (?,?,?)').bind(await sha256(token), name, Date.now() + 7 * 864e5).run();
+      return json({ link: `${new URL(request.url).origin}/verwaltung#einladung=${token}`, name, gueltig_tage: 7 });
+    }
     if (pfad === 'produkte' && m === 'GET') return json({ produkte: await sortiment(env) });
     if ((t = pfad.match(/^produkte\/([a-z0-9-]{2,40})$/)) && m === 'PATCH') return produktAendern(request, env, t[1]);
     if (pfad === 'geraete' && m === 'GET') {

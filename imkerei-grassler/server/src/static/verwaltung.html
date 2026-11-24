@@ -49,9 +49,9 @@ body{background:#f6eccb}
   <p>Melde dich mit deinem Passkey an, also mit Face ID, Fingerabdruck oder der Gerätesperre.</p>
   <div class="vw-reihe"><button class="button" id="btn-anmelden" type="button">Mit Passkey anmelden</button></div>
   <div class="vw-karte" id="einrichten" hidden>
-    <h2>Ersten Zugang einrichten</h2>
-    <p>Noch gibt es keinen Passkey. Gib den Einrichtungscode ein, den du von Elija bekommen hast.</p>
-    <label for="code">Einrichtungscode</label><input id="code" type="text" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <h2 id="einrichten-titel">Ersten Zugang einrichten</h2>
+    <p id="einrichten-text">Noch gibt es keinen Passkey. Gib den Einrichtungscode ein.</p>
+    <div id="code-feld"><label for="code">Einrichtungscode</label><input id="code" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
     <label for="name-erst">Name für dieses Gerät</label><input id="name-erst" type="text" placeholder="z. B. Thiemos iPhone">
     <div class="vw-reihe"><button class="button" id="btn-einrichten" type="button">Passkey anlegen</button></div>
   </div>
@@ -70,6 +70,7 @@ body{background:#f6eccb}
     <div class="vw-zahlen"><div><span class="vw-klein">Heute bezahlt</span><strong id="u-heute">–</strong></div><div><span class="vw-klein">Dieser Monat</span><strong id="u-monat">–</strong></div></div>
     <label for="filter">Anzeigen</label>
     <select id="filter"><option value="">Alle aktuellen</option><option value="bezahlt">Bezahlt, noch zu erledigen</option><option value="offen">Offen (noch nicht bezahlt)</option><option value="versendet">Versendet</option><option value="erledigt">Erledigt</option><option value="abgebrochen">Abgebrochen</option></select>
+    <div id="hinweise"></div>
     <div id="liste"></div>
   </div>
 
@@ -96,8 +97,15 @@ body{background:#f6eccb}
     <h2>Passkeys</h2>
     <p>Mit jedem dieser Passkeys kann man sich hier anmelden. Leg am besten einen zweiten an, z. B. am Laptop oder für Christoph.</p>
     <div id="passkeys"></div>
-    <label for="name-neu">Name für den neuen Passkey</label><input id="name-neu" type="text" placeholder="z. B. Christophs Handy">
-    <div class="vw-reihe"><button class="button" id="btn-neu" type="button">Weiteren Passkey anlegen</button><button class="button zweit" id="btn-abmelden" type="button">Abmelden</button></div>
+    <h2>Jemanden einladen</h2>
+    <p>Erstellt einen Link, der 7 Tage gilt und nur einmal funktioniert. Wer ihn am Handy öffnet, legt mit einem Tipp einen Passkey an.</p>
+    <label for="name-einladung">Für wen?</label><input id="name-einladung" type="text" placeholder="z. B. Thiemo">
+    <div class="vw-reihe"><button class="button" id="btn-einladen" type="button">Einladungslink erstellen</button></div>
+    <div class="vw-karte" id="einladung" hidden><p class="vw-klein">Einladungslink für <b id="einladung-name"></b>, 7 Tage gültig:</p><p><input id="einladung-link" type="text" readonly style="max-width:100%"></p>
+      <div class="vw-reihe"><button class="button" id="btn-kopieren" type="button">Link kopieren</button><a class="button zweit" id="einladung-wa" target="_blank" rel="noopener">Per WhatsApp schicken</a></div></div>
+    <h2>Auf diesem Gerät</h2>
+    <label for="name-neu">Name für einen weiteren Passkey auf diesem Gerät</label><input id="name-neu" type="text" placeholder="z. B. Laptop">
+    <div class="vw-reihe"><button class="button zweit" id="btn-neu" type="button">Passkey hier anlegen</button><button class="button zweit" id="btn-abmelden" type="button">Abmelden</button></div>
     <p class="vw-meldung" id="meldung-zugang" role="status"></p>
   </div>
 </section>

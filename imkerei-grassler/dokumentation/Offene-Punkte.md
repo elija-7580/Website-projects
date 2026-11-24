@@ -1,46 +1,47 @@
-# Offene Punkte · Fassung 09
+# Offene Punkte · Fassung 12
 
-Seit Fassung 09 sind Thiemos Angaben eingetragen: Betreiber (Thiemo und Christoph Grassler), Adresse Am Mühlkamp 30, 3492 Walkersdorf am Kamp, E-Mail, beide Telefonnummern (auch WhatsApp), Wunschdomain imkerei-grassler.at, drei Bienenstände mit Völkern und Sorten, Abholung rund um die Uhr in Wolfshof (Schönberg ab Frühjahr), alle Preise, Waben, sechs Mischhonige, Ausblick Oxymel und Propolis, Partnerschaftspakete mit Bedingungen, Gastro-Konditionen und Versandkosten.
+Aufteilung: **Elija macht alles, was geht.** Thiemo und Christoph nur, was nur sie können (siehe `website/fuer-thiemo.html`).
 
-Was noch fehlt, ist auf der Website weiterhin gestrichelt als „Platzhalter“ bzw. gelb mit „fehlt:“ markiert. Abhakliste für Thiemo: `website/fuer-thiemo.html`.
+## Ablauf für Elija (Reihenfolge)
 
-## Bitte bestätigen
-- [x] Wolfshof: Adresse ist Wolfshof 5 (bestätigt). Karten-Link sucht jetzt nach dieser Adresse.
-- [ ] Cremehonig fehlt in Thiemos Liste und wurde entfernt.
-- [ ] Gleicher Preis für Blüten-, Akazien- und Waldhonig (so umgesetzt).
-- [ ] Schreibweise „Waldviertler Mohn“ (Thiemo schrieb „Wald4-tler Mohn“, evtl. Marke).
+1. [ ] Thiemo fügt Elija in Mollie als Teammitglied mit Rolle „Developer“ hinzu (Einstellungen → Team).
+2. [ ] Cloudflare-Konto (Elija), dann im Ordner `server`: `npm install` und `npm run einrichten`.
+       Fragt nach Mollie-Test-Schlüssel (in Mollie oben links Thiemos Organisation wählen), optional Resend-Schlüssel und Domain.
+3. [ ] Den ausgegebenen Link `…/verwaltung#code=…` am eigenen Handy öffnen und den ersten Passkey anlegen.
+4. [ ] Verwaltung → Zugang → „Jemanden einladen“: Links für Thiemo und Christoph erstellen und per WhatsApp schicken.
+5. [ ] Testkäufe: Hütte (`/wolfshof`), Versand (`/bestellen`), Kartengerät (Verwaltung), Widerruf (`/widerruf`).
+6. [ ] `server/wrangler.jsonc` und `website/wolfshof-schild.html` committen.
+7. [ ] Optional: automatisches Hochladen bei jedem Push (Secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, siehe `server/README.md`).
+8. [ ] Domain `imkerei-grassler.at` registrieren (auf die Imkerei), bei Cloudflare hinzufügen, `npm run einrichten` erneut (Domain eintragen),
+       dann `npm run zugang:zuruecksetzen` und Passkeys neu anlegen (Passkeys hängen an der Adresse). Schild drucken und laminieren.
+9. [ ] E-Mails: Resend-Konto (gratis) mit bestätigter Domain oder Cloudflare Email Service (Workers Paid). Testbestellung prüfen.
+10. [ ] Live schalten: `npm run einrichten` mit dem Live-Schlüssel (`live_…`).
 
-## Standorte & Abholung
-- [ ] Ablauf der Abholung rund um die Uhr in Wolfshof (Selbstbedienung, Bezahlung).
-- [ ] Schönberg am Kamp: genaue Adresse und Startdatum (Karte nutzt die bisherigen Koordinaten).
-- [ ] Walkersdorf am Kamp ist auf der Illustration nur ungefähr eingezeichnet.
-- [ ] Fotos der Stände und Abholstellen.
+## Klären (Elija)
 
-## Mischhonige
-- [ ] Grundhonig je Sorte.
-- [ ] Etiketten als „Honig mit Zutaten“ (Zutatenverzeichnis, Allergene, Nährwerte, Mengenangabe der Zutat).
-- [ ] „Bio“ im Produktnamen: Nach EU-Bio-Recht darf ein nicht biozertifiziertes Produkt Bio-Zutaten in der Regel nur im Zutatenverzeichnis nennen. Vor dem Druck bei Kontrollstelle oder Lebensmittelaufsicht klären.
+- [ ] Etiketten der Mischhonige als „Honig mit Zutaten“ (Zutatenverzeichnis, Allergene wie Haselnuss, Mengenangabe der Zutat).
+- [ ] „Bio“ im Produktnamen: Nach EU-Bio-Recht darf ein nicht biozertifiziertes Produkt Bio-Zutaten in der Regel nur im Zutatenverzeichnis nennen. Bei Kontrollstelle oder Lebensmittelaufsicht nachfragen.
+- [ ] AGB, Widerrufsbelehrung (inkl. Funktion „Vertrag widerrufen“ nach § 13a FAGG), Datenschutz und Impressum prüfen lassen, z. B. WKO-Beratung.
+- [ ] Prüfen, ob Thiemos Mollie-Gerät in der Geräteliste (Terminals API) erscheint.
 
-## Selbstbedienung Wolfshof (Fassung 10)
-- [ ] Server einrichten (Anleitung `server/README.md`): Cloudflare-Konto, D1, Mollie-Schlüssel, Einrichtungscode, Passkeys.
-- [ ] Notlösung bis dahin: Zahllink mit offenem Betrag in `website/wolfshof.html` bei `data-zahllink`.
-- [ ] Prüfen, ob Thiemos Mollie-Gerät über die Terminals API ansprechbar ist.
-- [ ] Schild `website/wolfshof-schild.html` (A5, QR-Code auf `wolfshof.html`) ausdrucken. Bei Umzug auf imkerei-grassler.at QR-Code neu erzeugen.
-- [ ] Bargeld in der Hütte ja/nein.
-- Thiemos Kartengerät ist von Mollie: Zahlungen am Gerät und über die Website landen im selben Mollie-Konto.
+## Antworten von Thiemo (eine Nachricht)
 
-## Versand & Zahlung
-- [ ] Versanddienst und Lieferzeit.
-- [x] Online-Bestellung mit Mollie-Checkout gebaut (`website/bestellen.html`, Server nötig).
-- [ ] Fernabsatz: Widerrufsbelehrung, AGB, Preisangaben inkl. Versand rechtlich prüfen lassen.
+- [ ] Cremehonig gestrichen, gleicher Preis für alle drei Sorten?
+- [ ] Schreibweise „Waldviertler Mohn“ oder Marke „Wald4tler“?
+- [ ] Schönberg: Adresse und Startdatum.
+- [ ] Bargeld in der Hütte?
+- [ ] Lieferzeit beim Versand.
+- [ ] Betriebe: Muster, Rechnung/Zahlungsziel, Portionsgläser.
+- [ ] Partner: Besuche am Stand?
+- [ ] Bio-Nachweis des Beeren-Lieferanten.
+- [ ] Rechtsform (Landwirtschaft oder Gewerbe), UID.
+- [ ] Mit Steuerberatung: Registrierkasse/Belege, Umsatzsteuer (Kleinunternehmer?).
+- [ ] Fotos (Anleitung auf `fuer-thiemo.html`).
+- [ ] Freigabe zur Veröffentlichung.
 
-## Gastronomie & Partnerschaft
-- [ ] Muster, Rechnung/Zahlungsziel, Portionsgläser.
-- [ ] Logo für Speisekarten (Thiemo: „Logo gibt es noch nicht“).
-- [ ] Besuche am Bienenstand für Partner?
+## Erledigt
 
-## Rechtliches & Start
-- [ ] Impressum prüfen: Rechtsform, Betreiber, UID, Blattlinie.
-- [ ] Datenschutzerklärung für E-Mail, WhatsApp, Mollie und Hosting.
-- [ ] Domain registrieren, Hosting festlegen, Anfrageweg testen.
-- [ ] Ausdrückliche Freigabe zur Veröffentlichung.
+- [x] Alle Angaben von Thiemo (Fassung 09), Wolfshof 5 bestätigt.
+- [x] Selbstbedienung Wolfshof mit QR-Schild (Fassung 10).
+- [x] Server mit Mollie, Online-Bestellung, Kartengerät, Verwaltung mit Passkey (Fassung 11).
+- [x] Einrichtungs-Skript, Einladungslinks, automatisches Hochladen, Bestätigungs-E-Mails, Widerrufsfunktion, Entwürfe für AGB/Widerruf/Datenschutz (Fassung 12).

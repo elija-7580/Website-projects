@@ -76,3 +76,7 @@ Neue Seite `wolfshof.html`: Kundinnen und Kunden zählen an der Hütte per Handy
 ## Fassung 11 (Server, Mollie, Verwaltung)
 
 Neuer Ordner `server/`: Cloudflare Worker mit D1. Er liefert die Website aus, legt Mollie-Zahlungen mit Preisen aus der Datenbank an (Hütte und Versand), wertet den Webhook aus, zieht das Lager ab und schickt Beträge ans Mollie-Kartengerät. Verwaltung unter `/verwaltung` mit Passkey-Login. Neue Seiten: `bestellen.html` (Versand), `danke.html` (Zahlungsstatus); `wolfshof.html` nutzt den Server, ohne Server fällt sie auf den Mollie-Zahllink zurück. Einrichtung: `server/README.md`.
+
+## Fassung 12 (Elija richtet ein, Thiemo hat fast nichts zu tun)
+
+`npm run einrichten` im Ordner `server` erledigt Cloudflare, Datenbank, Mollie-Schlüssel, Einrichtungscode, Hochladen und QR-Schild in einem Durchgang. In der Verwaltung lädt man weitere Personen per Link ein (7 Tage, einmalig), Thiemo tippt nur noch auf „Zugang anlegen“. Neu: Bestellbestätigung und Nachricht an die Imkerei per E-Mail (Resend oder Cloudflare Email Service), Funktion „Vertrag widerrufen“ nach § 13a FAGG mit Eingangsbestätigung, Entwürfe für AGB, Widerrufsbelehrung und Datenschutz, Bestellknopf „Zahlungspflichtig bestellen“ mit AGB-Häkchen, automatisches Hochladen per GitHub Actions. `fuer-thiemo.html` zeigt nur noch, was Thiemo selbst tun muss.

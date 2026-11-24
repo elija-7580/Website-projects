@@ -11,45 +11,67 @@ Ein Cloudflare Worker, der vier Dinge erledigt:
 
 Die Daten liegen in Cloudflare D1 (SQLite). Kartendaten sieht der Server nie, die bleiben bei Mollie.
 
-## Einrichten (einmalig, ca. 30 Minuten)
+## Einrichten: ein Befehl (Elija)
 
-Voraussetzung ist Node.js 20 oder neuer auf dem Computer.
+Voraussetzungen:
+- Node.js 20 oder neuer
+- ein Cloudflare-Konto (Gratis-Tarif reicht)
+- Thiemo hat dich in Mollie als Teammitglied mit Rolle **„Developer“** hinzugefügt (Einstellungen → Team). Dann siehst du seine API-Schlüssel in deinem eigenen Mollie-Dashboard (oben links seine Organisation wählen → Entwickler → API-Schlüssel). Schlüssel nie per Mail oder Chat verschicken.
 
-1. **Cloudflare-Konto** anlegen, am besten auf die Imkerei bzw. Thiemo, nicht privat auf Elija. Für diese Größe reicht der Gratis-Tarif.
-2. Im Terminal:
-   ```sh
-   cd imkerei-grassler/server
-   npm install
-   npx wrangler login
-   npx wrangler d1 create imkerei-grassler
-   ```
-   Die ausgegebene `database_id` in `wrangler.jsonc` eintragen.
-3. Datenbank anlegen:
-   ```sh
-   npm run db:live
-   ```
-4. **Geheimnisse setzen.** Sie werden nur abgefragt, nie in Dateien geschrieben und nie in einen Chat kopiert:
-   ```sh
-   npx wrangler secret put MOLLIE_API_KEY      # zuerst den Test-Schlüssel (test_…) aus Mollie → Entwickler → API-Schlüssel
-   npx wrangler secret put EINRICHTUNGSCODE    # langer Zufallscode, z. B. Ausgabe von: openssl rand -base64 18
-   ```
-5. Hochladen:
-   ```sh
-   npm run deploy
-   ```
-   Wrangler zeigt die Adresse, z. B. `https://imkerei-grassler.<konto>.workers.dev`.
-6. **Ersten Passkey anlegen:** `…/verwaltung` am Handy öffnen, den Einrichtungscode eingeben, Passkey anlegen. Danach gleich unter „Zugang“ einen zweiten Passkey anlegen (Laptop oder Christoph). Sobald ein Passkey existiert, funktioniert der Einrichtungscode nicht mehr.
-7. **Im Testmodus ausprobieren:** auf `wolfshof.html` und `bestellen.html` einkaufen. Mollie zeigt im Testmodus eine Testseite, auf der man „bezahlt“ wählt. In der Verwaltung unter „Kartengerät“ einen Betrag senden; im Testmodus erscheint ein Link, über den man die Zahlung bestätigt.
-8. **Live schalten:** `npx wrangler secret put MOLLIE_API_KEY` mit dem Live-Schlüssel (`live_…`) wiederholen. Das Etikett „Testmodus“ in der Verwaltung verschwindet dann.
+```sh
+cd imkerei-grassler/server
+npm install
+npm run einrichten
+```
+
+Das Skript macht nacheinander:
+1. Anmeldung bei Cloudflare (Browser öffnet sich)
+2. Datenbank in der EU anlegen und in `wrangler.jsonc` eintragen, Tabellen und Sortiment einspielen
+3. Mollie-Schlüssel abfragen und bei Mollie prüfen (zuerst `test_…`), optional Resend-Schlüssel für E-Mails
+4. Einrichtungscode erzeugen
+5. Optional die eigene Domain eintragen (muss schon bei Cloudflare liegen)
+6. Hochladen (Geheimnisse gehen direkt zu Cloudflare, nichts landet in Dateien)
+7. QR-Code auf dem Hütten-Schild auf die neue Adresse setzen und nochmal hochladen
+
+Am Ende steht ein Link `…/verwaltung#code=…`. Den am eigenen Handy öffnen, dann wird der erste Passkey angelegt. Danach in der Verwaltung unter **Zugang → Jemanden einladen** je einen Link für Thiemo und Christoph erstellen und per WhatsApp schicken. Der Link gilt 7 Tage und nur einmal; die beiden tippen nur auf „Zugang anlegen“.
+
+Das Skript kann jederzeit nochmal laufen, etwa für den Live-Schlüssel, eine neue Domain oder einen neuen Code (`npm run einrichten -- --neuer-code`). Erledigtes wird übersprungen. Danach `wrangler.jsonc` und `../website/wolfshof-schild.html` committen.
+
+### Weitere Befehle
+
+| Befehl | Wofür |
+|---|---|
+| `npm run deploy` | Änderungen hochladen |
+| `npm run db:live` | Neue Datenbank-Migrationen einspielen |
+| `npm run zugang:zuruecksetzen` | Alle Passkeys löschen und neuen Code setzen (Notfall oder Domain-Umzug) |
+| `npm run schild -- https://…/wolfshof` | QR-Code auf dem Schild von Hand ändern |
+
+### Automatisch hochladen bei jedem Push
+
+Der Workflow `.github/workflows/imkerei-grassler-server.yml` spielt Migrationen ein und lädt hoch, sobald im Repo zwei Secrets gesetzt sind:
+- `CLOUDFLARE_ACCOUNT_ID`: zeigt `npm run einrichten` am Ende an
+- `CLOUDFLARE_API_TOKEN`: Cloudflare → Profil → API-Token → Vorlage „Edit Cloudflare Workers“, dazu Berechtigung „D1: Edit“
+
+```sh
+gh secret set CLOUDFLARE_ACCOUNT_ID
+gh secret set CLOUDFLARE_API_TOKEN
+```
+Ohne diese Secrets macht der Workflow nichts.
+
+### E-Mails
+
+Bestellbestätigung an die Kundin oder den Kunden, Nachricht an die Imkerei (`MAIL_IMKEREI`, Standard honig.grassler@gmail.com) und Eingangsbestätigung bei „Vertrag widerrufen“. Zwei Wege:
+- **Resend** (gratis bis 3.000 Mails im Monat): Konto anlegen, Domain bestätigen (DNS-Einträge bei Cloudflare), Schlüssel im Einrichtungs-Skript eingeben.
+- **Cloudflare Email Service** (Workers Paid): Binding `EMAIL` in `wrangler.jsonc` ergänzen, siehe Cloudflare-Doku „Email Service“.
+
+Absender ist `MAIL_ABSENDER` (Standard: `Imkerei Grassler <bestellung@imkerei-grassler.at>`). Ohne Mailversand wird nur protokolliert, und die Verwaltung zeigt einen Hinweis.
 
 ## Eigene Domain imkerei-grassler.at
 
-- Domain bei Cloudflare hinzufügen und in `wrangler.jsonc` ergänzen: `"routes": [{ "pattern": "imkerei-grassler.at", "custom_domain": true }]`, dann `npm run deploy`.
-- **Passkeys gelten nur für die Adresse, auf der sie angelegt wurden.** Nach dem Umzug auf die eigene Domain alte Passkeys löschen und mit dem Einrichtungscode neu anlegen:
-  ```sh
-  npx wrangler d1 execute DB --remote --command "DELETE FROM passkeys; DELETE FROM sitzungen;"
-  ```
-- Das QR-Schild (`website/wolfshof-schild.html`) auf die neue Adresse umstellen und neu drucken.
+1. Domain auf die Imkerei registrieren und bei Cloudflare hinzufügen.
+2. `npm run einrichten` und bei Schritt 5 die Domain eingeben. Das trägt Route und `OEFFENTLICHE_URL` ein und setzt das QR-Schild neu.
+3. **Passkeys gelten nur für die Adresse, auf der sie angelegt wurden:** `npm run zugang:zuruecksetzen`, eigenen Passkey neu anlegen, Thiemo und Christoph neu einladen.
+4. Schild neu drucken.
 
 ## Vorschau auf GitHub Pages
 
@@ -79,10 +101,12 @@ EINRICHTUNGSCODE=lokal-test-code-1234
 | Versand | wie die Hütte, dazu Lieferadresse. Mindestens 10 €, bis 49,99 € kommen 4,60 € Versand dazu, ab 50 € ist der Versand frei. Nur Österreich. |
 | Kartengerät | Die Verwaltung legt eine Zahlung mit `method=pointofsale` und `terminalId` an. Mollie schickt sie ans Gerät. |
 | Bestätigung | Mollie ruft `/api/mollie/webhook` auf. Der Server fragt den Status bei Mollie nach (nie dem Aufruf selbst vertrauen) und zieht bei „bezahlt“ das Lager ab. |
-| Verwaltung | WebAuthn mit `@simplewebauthn` (MIT-Lizenz). Die Sitzung ist ein HttpOnly-Cookie (SameSite=Strict, 30 Tage), Änderungen nur mit dem Kopf `X-Verwaltung: 1`. Nach 5 falschen Einrichtungscodes ist für 15 Minuten gesperrt. |
+| Verwaltung | WebAuthn mit `@simplewebauthn` (MIT-Lizenz). Die Sitzung ist ein HttpOnly-Cookie (SameSite=Strict, 30 Tage), Änderungen nur mit dem Kopf `X-Verwaltung: 1`. Nach 5 falschen Einrichtungscodes ist für 15 Minuten gesperrt. Einladungslinks sind einmalig und 7 Tage gültig; gespeichert wird nur ihr Hash. |
+| Widerruf | `POST /api/widerruf` (Funktion „Vertrag widerrufen“ → „Widerruf bestätigen“, § 13a FAGG). Speichert den Eingangszeitpunkt und schickt sofort eine Eingangsbestätigung per E-Mail. |
+| Bestätigung | Nach der ersten bezahlten Versand-Bestellung einmalig: Mail an die Kundin oder den Kunden (mit Rücktrittsbelehrung und Link) und an die Imkerei. |
 
 ## Noch offen
 
 - Erscheint Thiemos Gerät in der Mollie-Geräteliste (Terminals API)? Wenn nicht, gibt er den Betrag wie bisher direkt am Gerät ein. Bestellungen und Website funktionieren trotzdem.
 - Registrierkassen- und Belegpflicht mit der Steuerberatung klären: Auch Kartenzahlungen vor Ort zählen als Barumsatz.
-- AGB und Widerrufsbelehrung vor dem Start der Online-Bestellung.
+- Entwürfe für AGB, Widerrufsbelehrung und Datenschutz liegen auf der Website (`agb.html`, `widerruf.html`, `datenschutz.html`) und müssen vor dem Start geprüft werden.

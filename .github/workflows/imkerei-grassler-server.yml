@@ -1,0 +1,57 @@
+# SPDX-License-Identifier: LicenseRef-AllRightsReserved
+# SPDX-FileCopyrightText: 2026 Elija Samuel Friedrich-Ulrich
+# Lädt den Server der Imkerei Grassler bei jedem Push auf main automatisch zu Cloudflare hoch.
+# Läuft erst, wenn im Repo die Secrets CLOUDFLARE_API_TOKEN und CLOUDFLARE_ACCOUNT_ID gesetzt sind
+# (Anleitung: imkerei-grassler/server/README.md, Abschnitt „Automatisch hochladen“).
+name: Imkerei Grassler Server
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'imkerei-grassler/website/**'
+      - 'imkerei-grassler/server/**'
+      - '.github/workflows/imkerei-grassler-server.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: imkerei-grassler-server
+  cancel-in-progress: false
+
+jobs:
+  hochladen:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    defaults:
+      run:
+        working-directory: imkerei-grassler/server
+    steps:
+      - name: Noch nicht eingerichtet?
+        id: pruefen
+        working-directory: .
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Cloudflare-Secrets fehlen, nichts zu tun."; echo "los=nein" >> "$GITHUB_OUTPUT"
+          else echo "los=ja" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v4
+        if: steps.pruefen.outputs.los == 'ja'
+      - uses: actions/setup-node@v4
+        if: steps.pruefen.outputs.los == 'ja'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: imkerei-grassler/server/package-lock.json
+      - name: Abhängigkeiten
+        if: steps.pruefen.outputs.los == 'ja'
+        run: npm ci
+      - name: Datenbank-Änderungen einspielen
+        if: steps.pruefen.outputs.los == 'ja'
+        run: |
+          if grep -q '00000000-0000-0000-0000-000000000000' wrangler.jsonc; then
+            echo "::error::database_id fehlt in wrangler.jsonc. Zuerst einmal 'npm run einrichten' ausführen und committen."; exit 1; fi
+          npx wrangler d1 migrations apply DB --remote
+      - name: Hochladen
+        if: steps.pruefen.outputs.los == 'ja'
+        run: npx wrangler deploy

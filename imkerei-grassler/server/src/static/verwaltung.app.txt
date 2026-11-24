@@ -24,11 +24,31 @@
   const melde = (id, text, fehler = false) => { const el = $(id); el.textContent = text; el.classList.toggle('fehler', fehler); };
 
   // ---------- Anmeldung ----------
+  // Links wie /verwaltung#code=… oder /verwaltung#einladung=… übernehmen und aus der Adresszeile entfernen
+  const hash = new URLSearchParams(location.hash.slice(1));
+  const einladung = hash.get('einladung') || '';
+  if (hash.get('code')) $('#code').value = hash.get('code');
+  if (location.hash) history.replaceState(null, '', location.pathname);
+
   async function start() {
-    const s = await api('status');
+    const s = await api('status' + (einladung ? '?einladung=' + encodeURIComponent(einladung) : ''));
     $('#testmodus').hidden = !s.testmodus;
     if (s.angemeldet) return zeigeApp();
     zeigeAnmeldung(s);
+    if (einladung) {
+      $('#einrichten').hidden = false; $('#code-feld').hidden = true;
+      $('#btn-anmelden').hidden = true; document.querySelector('#anmelden > p').hidden = true;
+      if (s.einladung) {
+        $('#einrichten-titel').textContent = `Servus ${s.einladung.name}!`;
+        $('#einrichten-text').textContent = 'Du wurdest zur Verwaltung der Imkerei Grassler eingeladen. Tipp auf den Knopf, dann legt dein Handy einen Passkey an (Face ID, Fingerabdruck oder Code).';
+        $('#name-erst').value = s.einladung.name + 's Handy';
+        $('#btn-einrichten').textContent = 'Zugang anlegen';
+      } else {
+        $('#einrichten-titel').textContent = 'Link abgelaufen';
+        $('#einrichten-text').textContent = 'Dieser Einladungslink ist abgelaufen oder wurde schon benutzt. Bitte um einen neuen.';
+        $('#btn-einrichten').hidden = true; document.querySelector('label[for=name-erst]').hidden = true; $('#name-erst').hidden = true;
+      }
+    } else if ($('#code').value && !s.eingerichtet) { $('#name-erst').focus(); }
   }
   function zeigeAnmeldung(s) {
     $('#app').hidden = true; $('#anmelden').hidden = false;
@@ -43,14 +63,14 @@
       zeigeApp();
     } catch (e) { melde('#meldung-anmelden', e.name === 'NotAllowedError' ? 'Anmeldung abgebrochen.' : e.message, true); }
   });
-  async function passkeyAnlegen(code, name, meldungId) {
-    const optionen = await api('registrieren/optionen', { methode: 'POST', daten: { code } });
+  async function passkeyAnlegen(code, name) {
+    const optionen = await api('registrieren/optionen', { methode: 'POST', daten: { code, einladung } });
     const antwort = await SimpleWebAuthnBrowser.startRegistration({ optionsJSON: optionen });
-    await api('registrieren/pruefen', { methode: 'POST', daten: { code, name, antwort } });
+    await api('registrieren/pruefen', { methode: 'POST', daten: { code, einladung, name, antwort } });
   }
   $('#btn-einrichten').addEventListener('click', async () => {
     melde('#meldung-anmelden', '');
-    try { await passkeyAnlegen($('#code').value.trim(), $('#name-erst').value.trim(), '#meldung-anmelden'); zeigeApp(); }
+    try { await passkeyAnlegen($('#code').value.trim(), $('#name-erst').value.trim()); zeigeApp(); }
     catch (e) { melde('#meldung-anmelden', e.name === 'NotAllowedError' ? 'Abgebrochen.' : e.message, true); }
   });
 
@@ -69,6 +89,10 @@
     const d = await api('bestellungen' + ($('#filter').value ? '?status=' + $('#filter').value : ''));
     $('#testmodus').hidden = !d.testmodus;
     $('#u-heute').textContent = eur(d.umsatz.heute); $('#u-monat').textContent = eur(d.umsatz.monat);
+    $('#hinweise').innerHTML = (d.mailfehler ? `<p class="vw-karte vw-meldung fehler">${d.mailfehler} E-Mail(s) in den letzten 7 Tagen nicht verschickt. Bitte Elija Bescheid geben.</p>` : '') +
+      d.widerrufe.map((w) => `<article class="vw-karte vw-best"><div class="vw-best-kopf"><b>Widerruf ${esc(w.bestellung)}</b><span class="vw-status abgebrochen">${w.umfang === 'teil' ? 'Teilweise' : 'Ganz'}</span></div>
+        <div class="vw-klein">${esc(new Date(w.eingang).toLocaleString('de-AT'))} · ${esc(w.name)} · <a href="mailto:${esc(w.email)}">${esc(w.email)}</a>${w.bestaetigung_gesendet ? ' · Bestätigung verschickt' : ' · <b>Bestätigung NICHT verschickt</b>'}</div>
+        ${w.text ? `<p>${esc(w.text)}</p>` : ''}<div class="vw-reihe"><button class="button zweit" data-widerruf="${w.id}">Erledigt</button></div></article>`).join('');
     $('#liste').innerHTML = d.bestellungen.length ? d.bestellungen.map((b) => {
       const k = b.kunde;
       const aktionen = [
@@ -84,6 +108,10 @@
     }).join('') : '<p class="vw-karte">Keine Bestellungen.</p>';
   }
   $('#filter').addEventListener('change', ladeBestellungen);
+  $('#hinweise').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-widerruf]'); if (!b) return;
+    b.disabled = true; await api('widerrufe/' + b.dataset.widerruf, { methode: 'PATCH', daten: {} }).catch(() => {}); ladeBestellungen();
+  });
   $('#liste').addEventListener('click', async (e) => {
     const b = e.target.closest('button'); if (!b) return;
     b.disabled = true;
@@ -172,6 +200,19 @@
     melde('#meldung-zugang', '');
     try { await passkeyAnlegen('', $('#name-neu').value.trim()); $('#name-neu').value = ''; melde('#meldung-zugang', 'Passkey angelegt ✓'); ladePasskeys(); }
     catch (e) { melde('#meldung-zugang', e.name === 'NotAllowedError' ? 'Abgebrochen.' : e.name === 'InvalidStateError' ? 'Auf diesem Gerät gibt es schon einen Passkey für die Verwaltung.' : e.message, true); }
+  });
+  $('#btn-einladen').addEventListener('click', async () => {
+    melde('#meldung-zugang', '');
+    try {
+      const d = await api('einladungen', { methode: 'POST', daten: { name: $('#name-einladung').value.trim() } });
+      $('#einladung').hidden = false; $('#einladung-name').textContent = d.name; $('#einladung-link').value = d.link;
+      $('#einladung-wa').href = 'https://wa.me/?text=' + encodeURIComponent(`Servus ${d.name}! Mit diesem Link richtest du deinen Zugang zur Verwaltung der Imkerei Grassler ein (am Handy öffnen, gilt 7 Tage): ${d.link}`);
+      $('#name-einladung').value = '';
+    } catch (e) { melde('#meldung-zugang', e.message, true); }
+  });
+  $('#btn-kopieren').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($('#einladung-link').value); melde('#meldung-zugang', 'Link kopiert ✓'); }
+    catch { $('#einladung-link').select(); melde('#meldung-zugang', 'Bitte den markierten Link kopieren.'); }
   });
   $('#btn-abmelden').addEventListener('click', async () => { await api('abmelden', { methode: 'POST', daten: {} }); location.reload(); });
 

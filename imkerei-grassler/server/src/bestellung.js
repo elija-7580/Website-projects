@@ -4,6 +4,7 @@
 
 import { json, fehler, bestellnummer, zufall, leseJson, basisUrl, euro } from './util.js';
 import { zahlungAnlegen, zahlungHolen, statusAusMollie, MollieFehler } from './mollie.js';
+import { bestellungBestaetigen, imkereiBenachrichtigen, widerrufBestaetigen } from './mail.js';
 
 export const VERSAND = { mindestCent: 1000, freiAbCent: 5000, kostenCent: 460 };
 const MINDEST_WOLFSHOF_CENT = 100;
@@ -97,7 +98,7 @@ export async function zahlungStarten(request, env) {
 }
 
 // Status einer Bestellung mit Mollie abgleichen; zieht beim ersten "bezahlt" das Lager ab
-export async function abgleichen(env, bestellung) {
+export async function abgleichen(env, bestellung, basis) {
   if (!bestellung?.mollie_id) return bestellung;
   const zahlung = await zahlungHolen(env, bestellung.mollie_id);
   const neu = statusAusMollie(zahlung.status);
@@ -119,6 +120,15 @@ export async function abgleichen(env, bestellung) {
       bestellung.lager_abgezogen = 1;
     }
   }
+  // Einmalig: Bestätigung an Kundin/Kunden und Nachricht an die Imkerei (nur Versand)
+  if (basis && bestellung.kanal === 'online' && bestellung.status === 'bezahlt' && !bestellung.bestaetigt) {
+    const r = await env.DB.prepare('UPDATE bestellungen SET bestaetigt=1 WHERE id=? AND bestaetigt=0').bind(bestellung.id).run();
+    if (r.meta.changes === 1) {
+      bestellung.bestaetigt = 1;
+      await bestellungBestaetigen(env, bestellung, basis);
+      await imkereiBenachrichtigen(env, bestellung, basis);
+    }
+  }
   return bestellung;
 }
 
@@ -128,7 +138,7 @@ export async function webhook(request, env) {
   if (!id || !/^tr_\w+$/.test(id)) return new Response('', { status: 200 });
   const b = await env.DB.prepare('SELECT * FROM bestellungen WHERE mollie_id=?').bind(id).first();
   if (b) {
-    try { await abgleichen(env, b); } catch (err) { console.error('Webhook', err); return new Response('', { status: 500 }); }
+    try { await abgleichen(env, b, basisUrl(request, env)); } catch (err) { console.error('Webhook', err); return new Response('', { status: 500 }); }
   }
   return new Response('', { status: 200 });
 }
@@ -139,9 +149,33 @@ export async function bestellStatus(request, env) {
   if (!id || !token) return fehler(400, 'Bestellung fehlt');
   let b = await env.DB.prepare('SELECT * FROM bestellungen WHERE id=? AND token=?').bind(id, token).first();
   if (!b) return fehler(404, 'Bestellung nicht gefunden');
-  if (b.status === 'offen') { try { b = await abgleichen(env, b); } catch (err) { console.error(err); } }
+  if (b.status === 'offen') { try { b = await abgleichen(env, b, basisUrl(request, env)); } catch (err) { console.error(err); } }
   return json({
     bestellung: b.id, kanal: b.kanal, status: b.status, summe_cent: b.summe_cent, versand_cent: b.versand_cent,
     positionen: JSON.parse(b.positionen).map(({ name, groesse, menge, preis_cent }) => ({ name, groesse, menge, preis_cent })),
   });
+}
+
+// Rücktrittsfunktion nach § 13a FAGG („Vertrag widerrufen“ → „Widerruf bestätigen“)
+export async function widerrufEinreichen(request, env) {
+  let e;
+  try { e = await leseJson(request); } catch { return fehler(400, 'Ungültige Anfrage'); }
+  const t = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+  const w = { name: t(e.name, 120), bestellung: t(e.bestellung, 20).toUpperCase(), email: t(e.email, 200), umfang: e.umfang === 'teil' ? 'teil' : 'ganz', text: t(e.text, 1000) };
+  if (!w.name) return fehler(400, 'Bitte deinen Namen angeben');
+  if (!w.bestellung) return fehler(400, 'Bitte die Bestellnummer angeben (steht in der Bestätigungs-E-Mail, z. B. GR-7K3M9Q)');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(w.email)) return fehler(400, 'Bitte eine gültige E-Mail-Adresse angeben, an die die Bestätigung gehen soll');
+  if (w.umfang === 'teil' && !w.text) return fehler(400, 'Bitte angeben, welche Artikel du zurückgeben möchtest');
+  const ip = request.headers.get('cf-connecting-ip') || 'lokal';
+  const zaehler = await env.DB.prepare('SELECT anzahl, bis FROM fehlversuche WHERE schluessel=?').bind('widerruf:' + ip).first();
+  if (zaehler && zaehler.bis > Date.now() && zaehler.anzahl >= 10) return fehler(429, 'Zu viele Anfragen. Bitte schreib uns an honig.grassler@gmail.com.');
+  await env.DB.prepare(`INSERT INTO fehlversuche (schluessel, anzahl, bis) VALUES (?1,1,?2)
+    ON CONFLICT(schluessel) DO UPDATE SET anzahl = CASE WHEN bis < ?3 THEN 1 ELSE anzahl + 1 END, bis = CASE WHEN bis < ?3 THEN ?2 ELSE bis END`)
+    .bind('widerruf:' + ip, Date.now() + 3600e3, Date.now()).run();
+  w.eingang = new Date().toISOString();
+  const r = await env.DB.prepare('INSERT INTO widerrufe (name, bestellung, email, umfang, text, eingang) VALUES (?,?,?,?,?,?)')
+    .bind(w.name, w.bestellung, w.email, w.umfang, w.text || null, w.eingang).run();
+  const ok = await widerrufBestaetigen(env, w, basisUrl(request, env));
+  if (ok) await env.DB.prepare('UPDATE widerrufe SET bestaetigung_gesendet=1 WHERE id=?').bind(r.meta.last_row_id).run();
+  return json({ ok: true, eingang: w.eingang, bestaetigung_gesendet: ok, ...w });
 }

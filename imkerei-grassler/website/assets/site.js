@@ -182,7 +182,7 @@ function calc(){sb.querySelectorAll('.sb-zeile').forEach(z=>{const n=+z.querySel
  else if(ok&&!text)text=kanal==='online'?'Weiter geht’s zur sicheren Bezahlseite von Mollie.':'Der Betrag ist auf der Bezahlseite schon eingetragen.';
  hint.innerHTML=summe===0?'Wähl zuerst aus, was du mitnimmst.':text;
  btn.setAttribute('aria-disabled',ok&&!sende?'false':'true');
- btn.innerHTML=(summe>0?eur(summe)+' bezahlen':'Bezahlen')+' <span aria-hidden="true">↗</span>';
+ btn.innerHTML=kanal==='online'?'Zahlungspflichtig bestellen'+(summe>0?' · '+eur(summe):''):(summe>0?eur(summe)+' bezahlen':'Bezahlen')+' <span aria-hidden="true">↗</span>';
  if(API===null&&kanal==='wolfshof'){btn.href=ok?zahllink:'#';btn.target=ok?'_blank':'';btn.rel=ok?'noopener':'';}}
 frei?.addEventListener('input',calc);
 const fehlerBox=sb.querySelector('#sb-fehler');
@@ -190,10 +190,30 @@ function zeigeFehler(t){if(fehlerBox){fehlerBox.textContent=t;fehlerBox.hidden=!
 btn.addEventListener('click',async e=>{if(btn.getAttribute('aria-disabled')==='true'){e.preventDefault();return;}if(API===null)return;e.preventDefault();zeigeFehler('');
  const daten={kanal,positionen:positionen().map(({id,menge})=>({id,menge}))};
  if(kanal==='wolfshof')daten.etikett_cent=etikett();
- if(kanal==='online'){const form=document.querySelector('#sb-kunde');if(form&&!form.reportValidity())return;const f=new FormData(form);daten.kunde=Object.fromEntries(['name','email','telefon','strasse','plz','ort','notiz'].map(k=>[k,f.get(k)||'']));}
+ if(kanal==='online'){const form=document.querySelector('#sb-kunde');if(form&&!form.reportValidity()){zeigeFehler(document.querySelector('#k-agb')?.checked===false?'Bitte bestätige, dass du AGB und Widerrufsbelehrung gelesen hast, und fülle alle Pflichtfelder aus.':'Bitte fülle alle Pflichtfelder aus.');return;}const f=new FormData(form);daten.kunde=Object.fromEntries(['name','email','telefon','strasse','plz','ort','notiz'].map(k=>[k,f.get(k)||'']));}
  sende=true;calc();btn.innerHTML='Einen Moment …';
  try{const d=await holen('/api/zahlung',{method:'POST',body:JSON.stringify(daten)});if(!d.checkout)throw new Error('Keine Bezahlseite bekommen.');location.href=d.checkout;}
  catch(err){sende=false;calc();zeigeFehler(err.message);}});
 if(API!==null){holen('/api/produkte').then(d=>{versand=d.versand||versand;render(d.produkte);sb.classList.add('live');}).catch(()=>{if(kanal==='online')zeigeFehler('Das Sortiment konnte gerade nicht geladen werden.');verbinde();});}
 else{if(kanal==='online'){sb.hidden=true;document.querySelector('#sb-bald')?.removeAttribute('hidden');}verbinde();}
+})();
+
+/* Fassung 12: Rücktrittsfunktion „Vertrag widerrufen“ (§ 13a FAGG) */
+(()=>{const f=document.querySelector('#widerruf-form');if(!f)return;
+const meta=document.querySelector('meta[name="api-basis"]');
+const API=meta?(meta.content?meta.content.replace(/\/$/,''):(/github\.io$/.test(location.hostname)||location.protocol==='file:'?null:'')):null;
+const q=new URLSearchParams(location.search);if(q.get('b'))f.elements.bestellung.value=q.get('b');
+const fehl=document.querySelector('#widerruf-fehler'),ok=document.querySelector('#widerruf-ok'),btn=document.querySelector('#widerruf-senden');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+if(API===null){document.querySelector('#widerruf-ohne').hidden=false;}
+f.addEventListener('submit',async e=>{e.preventDefault();fehl.hidden=true;
+ const d=Object.fromEntries(new FormData(f));
+ if(!d.name||!d.bestellung||!d.email){fehl.textContent='Bitte Name, Bestellnummer und E-Mail angeben.';fehl.hidden=false;return;}
+ if(d.umfang==='teil'&&!d.text){fehl.textContent='Bitte angeben, welche Artikel du zurückgeben möchtest.';fehl.hidden=false;return;}
+ if(API===null){location.href='mailto:honig.grassler@gmail.com?subject='+encodeURIComponent('Widerruf '+d.bestellung)+'&body='+encodeURIComponent(`Hiermit widerrufe ich den Vertrag zur Bestellung ${d.bestellung} (${d.umfang==='teil'?'teilweise: '+d.text:'ganze Bestellung'}).\n\nName: ${d.name}\nE-Mail: ${d.email}`);return;}
+ btn.disabled=true;btn.textContent='Einen Moment …';
+ try{const r=await fetch(API+'/api/widerruf',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)});const a=await r.json().catch(()=>({}));if(!r.ok)throw new Error(a.fehler||'Gerade nicht erreichbar. Bitte schick den Widerruf per E-Mail an honig.grassler@gmail.com.');
+  const zeit=new Date(a.eingang).toLocaleString('de-AT',{timeZone:'Europe/Vienna',dateStyle:'long',timeStyle:'medium'});
+  f.hidden=true;ok.hidden=false;ok.innerHTML=`<h3>Widerruf eingegangen ✓</h3><p>Eingegangen am <b>${esc(zeit)}</b> zur Bestellung <b>${esc(a.bestellung)}</b> (${a.umfang==='teil'?'teilweise':'ganze Bestellung'}).</p><p>${a.bestaetigung_gesendet?'Die Eingangsbestätigung ist an '+esc(a.email)+' unterwegs.':'Die Bestätigungs-E-Mail konnte gerade nicht verschickt werden. Bitte mach einen Screenshot dieser Seite als Nachweis; wir melden uns bei dir.'}</p>`;ok.focus?.();}
+ catch(err){fehl.textContent=err.message;fehl.hidden=false;btn.disabled=false;btn.textContent='Widerruf bestätigen';}});
 })();

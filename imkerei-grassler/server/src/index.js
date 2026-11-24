@@ -3,7 +3,7 @@
 // Einstieg: /api/* für Website und Verwaltung, /verwaltung für Thiemo, alles andere ist die statische Website.
 
 import { json, fehler, cors } from './util.js';
-import { produkteOeffentlich, zahlungStarten, webhook, bestellStatus } from './bestellung.js';
+import { produkteOeffentlich, zahlungStarten, webhook, bestellStatus, widerrufEinreichen } from './bestellung.js';
 import { verwaltungApi } from './verwaltung.js';
 import seite from './static/verwaltung.html';
 import app from './static/verwaltung.app.txt';
@@ -44,6 +44,7 @@ export default {
         else if (p === '/api/zahlung' && request.method === 'POST') antwort = await zahlungStarten(request, env);
         else if (p === '/api/bestellung' && request.method === 'GET') antwort = await bestellStatus(request, env);
         else if (p === '/api/mollie/webhook' && request.method === 'POST') return await webhook(request, env);
+        else if (p === '/api/widerruf' && request.method === 'POST') antwort = await widerrufEinreichen(request, env);
         else if (p === '/api/gesund') antwort = json({ ok: true });
         else antwort = fehler(404, 'Nicht gefunden');
         return mitKopf(antwort, { ...c, ...SICHERHEIT });
